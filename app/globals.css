@@ -93,6 +93,192 @@ body {
   }
 }
 
+/* Hero Text Animation */
+.hero-text {
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  animation: text-focus-in 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
+}
+
+.hero-subtext {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  animation: text-focus-in 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) 0.5s both;
+}
+
+@keyframes text-focus-in {
+  0% {
+    filter: blur(12px);
+    opacity: 0;
+  }
+  100% {
+    filter: blur(0px);
+    opacity: 1;
+  }
+}
+
+/* City Skyline Layers */
+.city-stars {
+  background-image: radial-gradient(1px 1px at 25% 15%, white, transparent),
+    radial-gradient(1px 1px at 50% 40%, white, transparent), radial-gradient(1.5px 1.5px at 75% 25%, white, transparent),
+    radial-gradient(1px 1px at 30% 65%, white, transparent), radial-gradient(1.5px 1.5px at 60% 80%, white, transparent),
+    radial-gradient(1px 1px at 85% 55%, white, transparent);
+  background-size: 100% 100%;
+  opacity: 0.6;
+  animation: twinkle 8s ease-in-out infinite alternate;
+}
+
+.city-mountains {
+  height: 120px;
+  background-image: linear-gradient(to top right, transparent 50%, rgba(76, 29, 149, 0.6) 50%),
+    linear-gradient(to top left, transparent 50%, rgba(76, 29, 149, 0.5) 50%);
+  background-size: 300px 100px, 250px 80px;
+  background-position: 20% 100%, 80% 100%;
+  background-repeat: no-repeat;
+  opacity: 0.7;
+}
+
+.city-far-buildings {
+  height: 150px;
+  background-image: linear-gradient(to bottom, rgba(91, 33, 182, 0.8) 0%, rgba(91, 33, 182, 0.4) 100%);
+  background-size: 100% 100%;
+  mask-image: linear-gradient(to bottom, transparent, black),
+    repeating-linear-gradient(
+      to right,
+      black 0px,
+      black 15px,
+      transparent 15px,
+      transparent 20px,
+      black 20px,
+      black 35px,
+      transparent 35px,
+      transparent 40px,
+      black 40px,
+      black 50px,
+      transparent 50px,
+      transparent 55px,
+      black 55px,
+      black 70px,
+      transparent 70px,
+      transparent 75px,
+      black 75px,
+      black 85px,
+      transparent 85px,
+      transparent 90px,
+      black 90px,
+      black 105px,
+      transparent 105px,
+      transparent 110px
+    );
+  mask-size: 100% 100%, 1000px 100%;
+  mask-position: 0 0, 0 bottom;
+  mask-composite: intersect;
+  opacity: 0.9;
+}
+
+.city-close-buildings {
+  height: 180px;
+  background-image: linear-gradient(to bottom, rgba(109, 40, 217, 0.9) 0%, rgba(109, 40, 217, 0.5) 100%);
+  background-size: 100% 100%;
+  mask-image: repeating-linear-gradient(
+    to right,
+    black 0px,
+    black 30px,
+    transparent 30px,
+    transparent 35px,
+    black 35px,
+    black 60px,
+    transparent 60px,
+    transparent 65px,
+    black 65px,
+    black 90px,
+    transparent 90px,
+    transparent 95px,
+    black 95px,
+    black 120px,
+    transparent 120px,
+    transparent 125px,
+    black 125px,
+    black 150px,
+    transparent 150px,
+    transparent 155px
+  );
+  mask-size: 1200px 100%;
+  mask-position: center bottom;
+  opacity: 1;
+}
+
+.city-lights {
+  background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 25%);
+  background-size: 200px 200px;
+  background-position: center;
+  opacity: 0.5;
+  animation: city-glow 3s ease-in-out infinite alternate;
+}
+
+.city-clouds {
+  background-image: radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, 0.2) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 40%, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
+  background-size: 200% 100%;
+  opacity: 0.3;
+  animation: clouds-move 60s linear infinite;
+}
+
+/* Animations */
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes city-glow {
+  0% {
+    opacity: 0.3;
+    background-position: 0% 0%;
+  }
+  100% {
+    opacity: 0.6;
+    background-position: 100% 0%;
+  }
+}
+
+@keyframes clouds-move {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 200% 0%;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .city-mountains {
+    height: 80px;
+  }
+
+  .city-far-buildings {
+    height: 100px;
+  }
+
+  .city-close-buildings {
+    height: 120px;
+  }
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .city-stars,
+  .city-lights,
+  .city-clouds,
+  .hero-text,
+  .hero-subtext {
+    animation: none !important;
+  }
+}
+
 /* Add these styles for the animated blobs */
 .blob {
   position: absolute;
@@ -132,13 +318,540 @@ body {
   animation: blob-move-2 18s ease-in-out infinite;
 }
 
-/* Add a media query for reduced motion preference */
+.blob-5 {
+  width: 180px;
+  height: 180px;
+  left: 40%;
+  top: -30px;
+  animation: blob-move-1 22s ease-in-out infinite;
+}
+
+/* 3D perspective utilities */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+/* Text glow effect */
+.text-glow {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+}
+
+/* Replace the existing building styles with these enhanced styles */
+
+/* 3D Building styles */
+.cityscape-container {
+  transform-style: preserve-3d;
+  perspective: 1200px;
+  height: 200px;
+}
+
+.building {
+  position: absolute;
+  bottom: 0;
+  border-radius: 2px 2px 0 0;
+  transform-style: preserve-3d;
+  transform: translateZ(0);
+  transition: transform 0.3s ease;
+  --hover-lift: -5px;
+  --hover-duration: 0.5s;
+  --base-delay: 0.1s;
+}
+
+.building::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.1);
+  clip-path: polygon(0 0, 100% 0, 80% 100%, 20% 100%);
+  opacity: 0.3;
+}
+
+.building::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 0%, transparent 20%);
+  opacity: 0.5;
+}
+
+.building-windows {
+  position: absolute;
+  top: 15%;
+  left: 10%;
+  right: 10%;
+  bottom: 0;
+  background-image: linear-gradient(to bottom, transparent 5%, rgba(255, 255, 255, 0.15) 5%, transparent 10%),
+    linear-gradient(to right, transparent 30%, rgba(255, 255, 255, 0.15) 30%, transparent 60%);
+  background-size: 100% 20%, 100% 100%;
+  background-repeat: repeat, no-repeat;
+  opacity: 0.8;
+}
+
+.building-top {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 10px;
+  background: inherit;
+  border-radius: 2px 2px 0 0;
+  opacity: 0.8;
+}
+
+.building-crown {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 20px;
+  background: inherit;
+  clip-path: polygon(0 100%, 50% 0, 100% 100%);
+}
+
+.building-antenna {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 25px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Specific building animations with different timings */
+.skyscraper-1 {
+  animation: building-float-1 5s ease-in-out infinite;
+}
+
+.skyscraper-2 {
+  animation: building-float-2 7s ease-in-out infinite;
+}
+
+.skyscraper-3 {
+  animation: building-float-3 6s ease-in-out infinite;
+}
+
+.skyscraper-4 {
+  animation: building-float-1 8s ease-in-out infinite;
+}
+
+.skyscraper-5 {
+  animation: building-float-2 5.5s ease-in-out infinite;
+}
+
+.skyscraper-6 {
+  animation: building-float-3 7.5s ease-in-out infinite;
+}
+
+.skyscraper-7 {
+  animation: building-float-1 6.5s ease-in-out infinite;
+}
+
+.skyscraper-8 {
+  animation: building-float-2 8.5s ease-in-out infinite;
+}
+
+.skyscraper-9 {
+  animation: building-float-3 5.2s ease-in-out infinite;
+}
+
+.skyscraper-10 {
+  animation: building-float-1 7.2s ease-in-out infinite;
+}
+
+.skyscraper-11 {
+  animation: building-float-2 6.2s ease-in-out infinite;
+}
+
+.skyscraper-12 {
+  animation: building-float-3 8.2s ease-in-out infinite;
+}
+
+.skyscraper-13 {
+  animation: building-float-1 5.8s ease-in-out infinite;
+}
+
+.skyscraper-14 {
+  animation: building-float-2 7.8s ease-in-out infinite;
+}
+
+.skyscraper-15 {
+  animation: building-float-3 6.8s ease-in-out infinite;
+}
+
+/* Variable animation patterns for more visual diversity */
+@keyframes building-float-1 {
+  0%,
+  100% {
+    transform: translateY(0) translateZ(var(--z, 15px));
+  }
+  50% {
+    transform: translateY(-4px) translateZ(var(--z, 15px));
+  }
+}
+
+@keyframes building-float-2 {
+  0%,
+  100% {
+    transform: translateY(0) translateZ(var(--z, 10px));
+  }
+  50% {
+    transform: translateY(-6px) translateZ(var(--z, 10px));
+  }
+}
+
+@keyframes building-float-3 {
+  0%,
+  100% {
+    transform: translateY(0) translateZ(var(--z, 20px));
+  }
+  30% {
+    transform: translateY(-3px) translateZ(var(--z, 20px));
+  }
+  70% {
+    transform: translateY(-5px) translateZ(var(--z, 20px));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-gradient-x,
-  .animate-float,
-  .animate-float-slow,
-  .animate-float-slower,
-  .blob {
+  .building,
+  .skyscraper-1,
+  .skyscraper-2,
+  .skyscraper-3,
+  .skyscraper-4,
+  .skyscraper-5,
+  .skyscraper-6,
+  .skyscraper-7,
+  .skyscraper-8,
+  .skyscraper-9,
+  .skyscraper-10,
+  .skyscraper-11,
+  .skyscraper-12,
+  .skyscraper-13,
+  .skyscraper-14,
+  .skyscraper-15 {
+    animation: none !important;
+  }
+}
+
+/* Enhanced blob animations */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+}
+
+.animate-gradient-shift {
+  animation: gradient-shift 15s ease infinite;
+  background-size: 200% 200%;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 8s ease-in-out infinite;
+}
+
+/* Wave animation */
+.wave-animation {
+  background: linear-gradient(
+    45deg,
+    transparent 25%,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 50%,
+    transparent 75%,
+    rgba(255, 255, 255, 0.1) 75%
+  );
+  background-size: 30px 30px;
+  animation: wave 8s linear infinite;
+}
+
+@keyframes wave {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 60px 60px;
+  }
+}
+
+/* Morphing blob */
+.morphing-blob {
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  background: linear-gradient(45deg, rgba(138, 83, 255, 0.2) 0%, rgba(236, 73, 171, 0.2) 100%);
+  animation: morph 12s ease-in-out infinite;
+}
+
+@keyframes morph {
+  0% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+  25% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
+  50% {
+    border-radius: 50% 60% 30% 70% / 40% 40% 70% 60%;
+  }
+  75% {
+    border-radius: 40% 60% 70% 30% / 60% 30% 60% 70%;
+  }
+  100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+}
+
+/* Add prefers-reduced-motion support for the new animations */
+@media (prefers-reduced-motion: reduce) {
+  .animate-gradient-shift,
+  .animate-pulse-slow,
+  .wave-animation,
+  .morphing-blob {
+    animation: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .city-stars,
+  .city-lights,
+  .city-clouds,
+  .hero-text,
+  .hero-subtext {
+    animation: none !important;
+  }
+}
+
+//
+Add these new styles for the enhanced 3D city animation
+// Keep all existing styles
+
+/* 3D City Animation Styles */
+.city-animation-container {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  overflow: hidden;
+}
+
+.city-stars {
+  background-image: radial-gradient(1px 1px at 25% 15%, white, transparent),
+    radial-gradient(1px 1px at 50% 40%, white, transparent), radial-gradient(1.5px 1.5px at 75% 25%, white, transparent),
+    radial-gradient(1px 1px at 30% 65%, white, transparent), radial-gradient(1.5px 1.5px at 60% 80%, white, transparent),
+    radial-gradient(1px 1px at 85% 55%, white, transparent);
+  background-size: 100% 100%;
+  opacity: 0.6;
+  animation: twinkle 8s ease-in-out infinite alternate;
+}
+
+.city-buildings-3d {
+  height: 100%;
+  width: 100%;
+  transform-style: preserve-3d;
+  transform: translateZ(0);
+}
+
+.building-3d {
+  position: absolute;
+  bottom: 0;
+  transform-style: preserve-3d;
+  transform: translateZ(0) translateY(0);
+  animation: building-float 6s ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+.building-3d-front {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--building-color, rgba(109, 40, 217, 0.9));
+  transform: translateZ(10px);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.building-3d-side {
+  position: absolute;
+  bottom: 0;
+  width: 10px;
+  height: 100%;
+  right: -10px;
+  background-color: var(--building-color, rgba(109, 40, 217, 0.9));
+  filter: brightness(0.7);
+  transform: rotateY(90deg) translateZ(0);
+  transform-origin: left center;
+}
+
+.building-3d-top {
+  position: absolute;
+  width: 100%;
+  height: 10px;
+  top: 0;
+  background-color: var(--building-color, rgba(109, 40, 217, 0.9));
+  filter: brightness(1.2);
+  transform: rotateX(-90deg) translateZ(0);
+  transform-origin: bottom center;
+}
+
+.building-3d-windows {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  right: 10%;
+  bottom: 0;
+  transform: translateZ(11px);
+  background-image: repeating-linear-gradient(
+      to bottom,
+      transparent,
+      transparent 5%,
+      rgba(255, 255, 255, 0.2) 5%,
+      rgba(255, 255, 255, 0.2) 7%,
+      transparent 7%,
+      transparent 12%
+    ),
+    repeating-linear-gradient(
+      to right,
+      transparent,
+      transparent 20%,
+      rgba(255, 255, 255, 0.2) 20%,
+      rgba(255, 255, 255, 0.2) 25%,
+      transparent 25%,
+      transparent 45%
+    );
+  animation: window-lights 8s infinite alternate;
+}
+
+.building-3d-antenna {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  width: 2px;
+  height: 15px;
+  background-color: rgba(255, 255, 255, 0.7);
+  transform: translateX(-50%) translateZ(10px);
+}
+
+.glow-effect {
+  box-shadow: 0 0 20px 5px rgba(255, 255, 200, 0.5);
+}
+
+.city-clouds {
+  background-image: radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, 0.3) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 40%, rgba(255, 255, 255, 0.3) 0%, transparent 60%);
+  background-size: 200% 100%;
+  opacity: 0.4;
+  animation: clouds-move 60s linear infinite;
+}
+
+.flying-object {
+  width: 4px;
+  height: 4px;
+  background-color: rgba(255, 0, 0, 0.7);
+  border-radius: 50%;
+  box-shadow: 0 0 5px 2px rgba(255, 0, 0, 0.3);
+  animation: fly-across var(--duration, 15s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+.flying-object::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 1px;
+  background: linear-gradient(to left, rgba(255, 0, 0, 0.7), transparent);
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@keyframes building-float {
+  0%,
+  100% {
+    transform: translateY(0) translateZ(0);
+  }
+  50% {
+    transform: translateY(-5px) translateZ(0);
+  }
+}
+
+@keyframes window-lights {
+  0%,
+  15%,
+  25%,
+  35%,
+  55%,
+  65%,
+  85%,
+  100% {
+    opacity: 0.8;
+  }
+  20%,
+  30%,
+  60%,
+  90% {
+    opacity: 1;
+  }
+}
+
+@keyframes fly-across {
+  0% {
+    left: var(--path, 0);
+    top: var(--path, 20%);
+  }
+  100% {
+    left: var(--path, 100%);
+    top: var(--path, 40%);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .building-3d-front,
+  .building-3d-side,
+  .building-3d-top {
+    transform: scale(0.8) translateZ(8px);
+  }
+
+  .building-3d-windows {
+    transform: scale(0.8) translateZ(9px);
+  }
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .building-3d,
+  .city-stars,
+  .city-clouds,
+  .flying-object,
+  .building-3d-windows {
     animation: none !important;
   }
 }
