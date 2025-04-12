@@ -49,7 +49,7 @@ export function Footer() {
                 hello@welcomeanywhere.ai
               </Link>
               <Link
-                href="https://github.com/welcomeanywhere"
+                href="https://github.com/vinnyboi7/welcome-anywhere-app"
                 className="flex items-center text-sm text-gray-400 hover:text-purple-400 transition-colors"
               >
                 <Github className="h-4 w-4 mr-2" />
