@@ -651,9 +651,15 @@ body {
   }
 }
 
-//
+/*
 Add these new styles for the enhanced 3D city animation
-// Keep all existing styles
+Keep all existing styles
+*/
+
+/* 
+Add these new styles for the enhanced 3D city animation
+Keep all existing styles
+*/
 
 /* 3D City Animation Styles */
 .city-animation-container {
