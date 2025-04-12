@@ -321,6 +321,55 @@ function generateMockGuideData(
   // Generate a welcome message
   const welcomeMessage = `Welcome to ${city}, ${state}! We're excited to help you settle into your new home. This guide has been customized based on your preferences to help you navigate the city and find resources that match your needs. ${city} is known for its ${getLocationCharacteristics(city, state)} and offers a great quality of life for newcomers.`
 
+  /**
+   * Generates a tailored food recommendation text based on the user's preferences
+   */
+  function generateFoodRecommendationText(city: string, preferences: string[]): string {
+    if (preferences.length === 0) {
+      return `${city} offers a diverse food scene with options for every taste. The local Farmers Market on weekends is worth checking out for fresh produce and artisanal foods.`
+    }
+
+    // Create specific recommendations based on food preferences
+    const recommendationsByPreference: Record<string, string> = {
+      vegetarian: `${city} has several excellent vegetarian restaurants like Green Table and Fresh Harvest that serve creative plant-based dishes using seasonal ingredients.`,
+      vegan: `For vegan dining in ${city}, check out Plant Power and Pure Kitchen which offer innovative plant-based menus with everything from comfort food to gourmet options.`,
+      halal: `${city} has a growing selection of halal restaurants including Spice Garden and Halal Grill that offer authentic cuisine while adhering to halal standards.`,
+      "non-veg": `${city} is known for its excellent non-vegetarian options including the popular ${city} Steakhouse and Seafood Harbor which offer premium meats and fresh seafood.`,
+      anything: `${city} has a diverse culinary scene with options for every taste. From fine dining to casual eateries, you'll find everything from local specialties to international cuisine.`,
+    }
+
+    // If there's only one preference, return its specific recommendation
+    if (preferences.length === 1) {
+      const pref = preferences[0].toLowerCase()
+      return (
+        recommendationsByPreference[pref] ||
+        `Based on your preference for ${preferences[0]}, ${city} offers several dining options that cater to your taste. The local Farmers Market on weekends is also worth checking out.`
+      )
+    }
+
+    // For multiple preferences, combine recommendations
+    let recommendation = `Based on your food preferences, ${city} offers several great dining options. `
+
+    // Add specific restaurant suggestions for each preference
+    preferences.forEach((pref, index) => {
+      const normalizedPref = pref.toLowerCase()
+
+      if (normalizedPref === "vegetarian") {
+        recommendation += `For vegetarian options, try Green Table or Seasons Garden. `
+      } else if (normalizedPref === "vegan") {
+        recommendation += `Plant Power and Pure Kitchen offer excellent vegan menus. `
+      } else if (normalizedPref === "halal") {
+        recommendation += `Spice Garden and Halal Grill provide authentic halal options. `
+      } else if (normalizedPref === "non-veg") {
+        ;`${city} Steakhouse and Seafood Harbor are great for non-vegetarian dishes. `
+      }
+    })
+
+    recommendation += `The ${city} Farmers Market on weekends is also worth exploring for fresh and local food options.`
+
+    return recommendation
+  }
+
   return {
     welcomeMessage,
     housingResources: {
@@ -336,7 +385,7 @@ function generateMockGuideData(
       events,
     },
     foodSuggestions: {
-      recommendations: `Based on your food preferences (${input.foodPreferences.join(", ")}), you might enjoy restaurants like Green Plate (vegetarian), Spice Garden (offers halal options), and The Local Table (farm-to-table with diverse menu). The ${city} Farmers Market on weekends is also worth checking out.`,
+      recommendations: generateFoodRecommendationText(city, input.foodPreferences),
       places: foodPlaces,
     },
     languageHelp,

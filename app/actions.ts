@@ -551,17 +551,115 @@ function generateMockRestaurants(city: string, stateCode: string, preferences: s
   // Get neighborhoods for this city
   const neighborhoods = getNeighborhoods(city)
 
-  // Generate 5 restaurants
+  // Generate restaurants
   const restaurants: Restaurant[] = []
 
-  for (let i = 0; i < 5; i++) {
+  // If we have specific preferences, make sure we prioritize those
+  if (preferences.length > 0) {
+    // Create a mapping of preference to restaurant type for more accurate matching
+    const preferenceToType: Record<string, string[]> = {
+      vegetarian: ["Vegetarian", "Plant-based", "Health Food"],
+      vegan: ["Vegan", "Plant-based", "Health Food"],
+      halal: ["Halal", "Middle Eastern", "Lebanese", "Turkish"],
+      "non-veg": ["Steakhouse", "BBQ", "Seafood", "Burgers"],
+      anything: ["American", "Italian", "Chinese", "Mexican", "Indian"],
+    }
+
+    // For each preference, add at least one matching restaurant
+    for (const pref of preferences) {
+      const normalizedPref = pref.toLowerCase()
+      const types = preferenceToType[normalizedPref] || ["Fusion", "International"]
+
+      // Select a random type from the matching types
+      const cuisineType = types[Math.floor(Math.random() * types.length)]
+
+      // Add a restaurant of this type
+      addRestaurantOfType(restaurants, city, stateCode, neighborhoods, normalizedPref, cuisineType)
+
+      // If we have enough restaurants, stop adding more
+      if (restaurants.length >= 5) break
+    }
+  }
+
+  // Fill remaining slots with restaurants from relevant cuisines
+  while (restaurants.length < 5) {
     // Select a cuisine type for this restaurant
-    const cuisineType = relevantCuisines[i % relevantCuisines.length]
+    const cuisineType = relevantCuisines[restaurants.length % relevantCuisines.length]
 
     // Select a specific cuisine within that type
     const specificCuisines = cuisineTypes[cuisineType]
     const cuisine = specificCuisines[Math.floor(Math.random() * specificCuisines.length)]
 
+    // Add a restaurant with this cuisine
+    addRestaurantWithCuisine(restaurants, city, stateCode, neighborhoods, cuisineType, cuisine)
+  }
+
+  /**
+   * Adds a restaurant of a specific type to the restaurants array
+   */
+  function addRestaurantOfType(
+    restaurants: Restaurant[],
+    city: string,
+    stateCode: string,
+    neighborhoods: string[],
+    preference: string,
+    cuisineType: string,
+  ) {
+    // Select a name template based on preference
+    let name = ""
+    let priceRange = "$"
+
+    if (preference === "vegetarian") {
+      name = ["Green Table", "Seasons Garden", "Fresh Harvest", `${city} Vegetarian`][Math.floor(Math.random() * 4)]
+      priceRange = "$$"
+    } else if (preference === "vegan") {
+      name = ["Plant Power", "Pure Kitchen", "Green Life", `${city} Vegan Cafe`][Math.floor(Math.random() * 4)]
+      priceRange = "$$"
+    } else if (preference === "halal") {
+      name = ["Halal Grill", "Spice Garden", "Authentic Halal", `${city} Halal Kitchen`][Math.floor(Math.random() * 4)]
+      priceRange = "$$"
+    } else if (preference === "non-veg") {
+      name = [`${city} Steakhouse`, "Meat & Grill", "Seafood Harbor", "Prime Cuts"][Math.floor(Math.random() * 4)]
+      priceRange = "$$$"
+    } else {
+      name = [`${city} Eatery`, "Local Table", "Fusion Kitchen", "City Diner"][Math.floor(Math.random() * 4)]
+      priceRange = "$$"
+    }
+
+    // Select a neighborhood
+    const neighborhood = neighborhoods[Math.floor(Math.random() * neighborhoods.length)]
+
+    // Generate a street address
+    const streetNumber = Math.floor(Math.random() * 1000) + 100
+    const streets = ["Main St", "Oak Ave", "Maple Rd", "Broadway", "Park Ave", "1st St", "Washington Blvd", "Market St"]
+    const street = streets[Math.floor(Math.random() * streets.length)]
+
+    // Generate a rating (3.5 to 5.0)
+    const rating = Number.parseFloat((3.5 + Math.random() * 1.5).toFixed(1))
+
+    // Create the restaurant object
+    restaurants.push({
+      name,
+      address: `${streetNumber} ${street}, ${neighborhood}, ${stateCode}`,
+      rating,
+      type: cuisineType,
+      priceRange,
+      link: `https://www.google.com/maps/search/${encodeURIComponent(name)}+${encodeURIComponent(city)}+${stateCode}`,
+      photoUrl: `/placeholder.svg?height=200&width=300&query=${encodeURIComponent(cuisineType)} restaurant food`,
+    })
+  }
+
+  /**
+   * Adds a restaurant with a specific cuisine to the restaurants array
+   */
+  function addRestaurantWithCuisine(
+    restaurants: Restaurant[],
+    city: string,
+    stateCode: string,
+    neighborhoods: string[],
+    cuisineType: keyof typeof cuisineTypes,
+    cuisine: string,
+  ) {
     // Select a name template and generate a name
     const nameTemplates = nameTemplatesByCuisine[cuisineType]
     const nameTemplate = nameTemplates[Math.floor(Math.random() * nameTemplates.length)]
@@ -579,6 +677,7 @@ function generateMockRestaurants(city: string, stateCode: string, preferences: s
     const rating = Number.parseFloat((3.5 + Math.random() * 1.5).toFixed(1))
 
     // Generate a price range
+    const priceRanges = ["$", "$$", "$$$"]
     const priceRange = priceRanges[Math.floor(Math.random() * priceRanges.length)]
 
     // Create the restaurant object
@@ -589,7 +688,7 @@ function generateMockRestaurants(city: string, stateCode: string, preferences: s
       type: cuisine,
       priceRange,
       link: `https://www.google.com/maps/search/${encodeURIComponent(name)}+${encodeURIComponent(city)}+${stateCode}`,
-      photoUrl: `/placeholder.svg?height=200&width=300&query=restaurant`,
+      photoUrl: `/placeholder.svg?height=200&width=300&query=${encodeURIComponent(cuisine)} restaurant food`,
     })
   }
 
