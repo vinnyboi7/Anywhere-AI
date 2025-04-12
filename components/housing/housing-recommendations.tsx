@@ -37,14 +37,18 @@ declare global {
   }
 }
 
+// And change the map and markers state variables:
+//const [map, setMap] = useState<any | null>(null)
+//const [markers, setMarkers] = useState<any[]>([])
+
 export function HousingRecommendations({ location, budget, housingType }: HousingRecommendationsProps) {
   const [properties, setProperties] = useState<HousingProperty[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedProperty, setSelectedProperty] = useState<string | null>(null)
   const [mapLoaded, setMapLoaded] = useState(false)
-  const [map, setMap] = useState<google.maps.Map | null>(null)
-  const [markers, setMarkers] = useState<google.maps.Marker[]>([])
+  const [map, setMap] = useState<any | null>(null)
+  const [markers, setMarkers] = useState<any[]>([])
 
   // Generate mock properties based on location and budget
   useEffect(() => {
