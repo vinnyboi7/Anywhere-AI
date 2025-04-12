@@ -47,8 +47,9 @@ export async function POST(request: Request) {
       const mockRestaurants = generateEnhancedMockRestaurants(locationInfo.city, locationInfo.stateCode, [])
       return NextResponse.json(mockRestaurants)
     } catch (fallbackError) {
-      // If even the fallback fails, return a generic error
-      return NextResponse.json({ error: "Failed to get food recommendations" }, { status: 500 })
+      // If even the fallback fails, return generic mock data
+      const mockRestaurants = generateEnhancedMockRestaurants("New York", "NY", [])
+      return NextResponse.json(mockRestaurants)
     }
   }
 }
@@ -154,7 +155,7 @@ function generateEnhancedMockRestaurants(city: string, stateCode: string, prefer
   }
 
   // Generate price ranges
-  const priceRanges = ["$", "$", "$$", "$$", "$$$"]
+  const priceRanges = ["$", "$$", "$$$"]
 
   // Map preferences to cuisines
   const relevantCuisines = mapPreferencesToCuisines(preferences)

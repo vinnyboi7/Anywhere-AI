@@ -39,6 +39,7 @@ export interface GuideResponse {
   locationInfo: {
     city: string
     state: string
+    stateCode: string
     fullAddress: string
   }
 }
@@ -346,6 +347,7 @@ function generateMockGuideData(
     locationInfo: {
       city,
       state,
+      stateCode,
       fullAddress,
     },
   }

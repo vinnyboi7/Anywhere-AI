@@ -92,6 +92,7 @@ export default function WelcomeForm() {
   const [guideData, setGuideData] = useState<GuideResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [budgetDisplay, setBudgetDisplay] = useState(1000)
+  const [locationInfo, setLocationInfo] = useState<{ city: string } | null>(null)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -114,7 +115,17 @@ export default function WelcomeForm() {
     try {
       const data = await generateGuide(values)
       setGuideData(data)
-    } catch (err) {
+
+      // Extract city from welcome message if available
+      if (data.welcomeMessage) {
+        const cityMatch = data.welcomeMessage.match(/Welcome to ([^,]+),/)
+        if (cityMatch && cityMatch[1]) {
+          setLocationInfo({
+            city: cityMatch[1].trim(),
+          })
+        }
+      }
+    } catch (err: any) {
       console.error("Error generating guide:", err)
       setError("We couldn't generate your personalized guide at this moment. Please try again later.")
     } finally {
@@ -340,12 +351,6 @@ export default function WelcomeForm() {
                   <p className="text-red-500">{error}</p>
                 </div>
               )}
-              {error && error.includes("OpenAI") && (
-                <div className="text-center mt-4">
-                  <p className="text-amber-600">OpenAI API key is required for enhanced recommendations.</p>
-                  {/* No API key setup needed anymore */}
-                </div>
-              )}
             </form>
           </CardContent>
         </Card>
@@ -353,7 +358,7 @@ export default function WelcomeForm() {
 
       {guideData && (
         <div className="mt-8">
-          <GuideResults data={guideData} location={form.getValues().location} />
+          <GuideResults data={guideData} location={locationInfo?.city || form.getValues().location} />
         </div>
       )}
     </div>

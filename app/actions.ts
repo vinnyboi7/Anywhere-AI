@@ -88,35 +88,18 @@ export async function generateGuide(formData: z.infer<typeof formSchema>): Promi
     // Get restaurant recommendations
     let restaurants: Restaurant[] = []
     try {
-      // Fetch restaurant data from our API endpoint
-      const restaurantResponse = await fetch(`/api/get-food`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          zipCode: zipCode,
-          foodPreferences: formData.foodPreferences,
-        }),
-      })
-
-      if (restaurantResponse.ok) {
-        restaurants = await restaurantResponse.json()
-      } else {
-        console.warn("Restaurant API returned an error. Using mock data instead.")
-        // If the API call fails, generate restaurants directly
-        restaurants = generateMockRestaurants(
-          guideData.locationInfo.city,
-          guideData.locationInfo.stateCode,
-          formData.foodPreferences,
-        )
-      }
-    } catch (error) {
-      console.error("Error fetching restaurant data:", error)
-      // If there's an error, generate restaurants directly
+      // Generate restaurants directly without API call to avoid client-side fetch issues
       restaurants = generateMockRestaurants(
         guideData.locationInfo.city,
         guideData.locationInfo.stateCode,
+        formData.foodPreferences,
+      )
+    } catch (error) {
+      console.error("Error generating restaurant data:", error)
+      // If there's an error, generate restaurants with fallback data
+      restaurants = generateMockRestaurants(
+        guideData.locationInfo.city,
+        guideData.locationInfo.stateCode || guideData.locationInfo.state.substring(0, 2).toUpperCase(),
         formData.foodPreferences,
       )
     }
@@ -560,7 +543,7 @@ function generateMockRestaurants(city: string, stateCode: string, preferences: s
   }
 
   // Generate price ranges
-  const priceRanges = ["$", "$$", "$$$"]
+  const priceRanges = ["$", "$", "$$"]
 
   // Map preferences to cuisines
   const relevantCuisines = mapPreferencesToCuisines(preferences)
