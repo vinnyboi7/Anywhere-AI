@@ -6,6 +6,7 @@ import type { GuideResponse } from "@/app/actions"
 import { MapPin, Briefcase, Home, Heart, Globe, Utensils, HelpCircle, Calendar, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { FallbackImage } from "./fallback-image"
+import { HousingRecommendations } from "@/components/housing/housing-recommendations"
 
 interface GuideResultsProps {
   data: GuideResponse
@@ -86,7 +87,13 @@ export function GuideResults({ data, location }: GuideResultsProps) {
             className="p-4 bg-white dark:bg-gray-800 rounded-md border dark:border-gray-700 transition-colors duration-300"
           >
             <h3 className="text-lg font-semibold mb-2 dark:text-white">Housing Recommendations</h3>
-            <p className="whitespace-pre-line dark:text-gray-300">{data.housingInfo}</p>
+            <p className="whitespace-pre-line dark:text-gray-300 mb-6">{data.housingInfo}</p>
+
+            <HousingRecommendations
+              location={location}
+              budget={data.budget || 2000}
+              housingType={data.housingType || "Apartment"}
+            />
           </TabsContent>
 
           <TabsContent

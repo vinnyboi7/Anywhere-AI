@@ -58,6 +58,8 @@ export type GuideResponse = {
   jobListings: JobListing[]
   events: Event[]
   restaurants: Restaurant[]
+  budget: number
+  housingType: string
 }
 
 // Update the generateGuide function to include restaurant data
@@ -116,6 +118,8 @@ export async function generateGuide(formData: z.infer<typeof formSchema>): Promi
       jobListings,
       events,
       restaurants,
+      budget: formData.budget,
+      housingType: formData.housing,
     }
   } catch (error: any) {
     console.error("Error generating guide:", error)
