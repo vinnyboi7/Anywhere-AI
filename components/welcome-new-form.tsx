@@ -149,6 +149,44 @@ const buildingShadowStyles = `
     filter: drop-shadow(0 0 3px rgba(255, 255, 200, 0.5));
   }
 
+  /* Update cloud animations to be more visible */
+  .cloud {
+    position: absolute;
+    background: white;
+    border-radius: 100px;
+    filter: blur(8px);
+    opacity: 0.7;
+  }
+
+  .cloud-1 {
+    width: 120px;
+    height: 50px;
+    top: 20%;
+    left: -120px;
+    animation: cloud-move 30s linear infinite;
+    box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.3);
+  }
+
+  .cloud-2 {
+    width: 180px;
+    height: 60px;
+    top: 40%;
+    left: -180px;
+    animation: cloud-move 40s linear infinite;
+    animation-delay: 5s;
+    box-shadow: 0 0 25px 12px rgba(255, 255, 255, 0.4);
+  }
+
+  .cloud-3 {
+    width: 100px;
+    height: 40px;
+    top: 60%;
+    left: -100px;
+    animation: cloud-move 25s linear infinite;
+    animation-delay: 12s;
+    box-shadow: 0 0 15px 8px rgba(255, 255, 255, 0.3);
+  }
+
   /* Cloud animations */
   .cloud {
     position: absolute;
@@ -267,6 +305,15 @@ const buildingShadowStyles = `
       transform: rotate(-45deg) translateX(-200px);
       opacity: 0;
     }
+  }
+
+  /* Add subtle pattern overlay to the light theme background */
+  .light-theme-pattern {
+    background-image: 
+      radial-gradient(circle at 25% 25%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, rgba(96, 165, 250, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(167, 139, 250, 0.05) 0%, transparent 70%);
+    background-size: 100% 100%;
   }
 `
 
@@ -405,19 +452,34 @@ export default function WelcomeForm() {
       {/* Enhanced 3D City Hero Section - Smaller Height */}
       <div className="relative mb-12 rounded-lg overflow-hidden">
         {/* Animated 3D City Background */}
-        <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-purple-200 via-indigo-100 to-blue-200 dark:from-indigo-950 dark:via-slate-900 dark:to-gray-900 hero-background transition-colors duration-300"></div>
+        <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-purple-300 via-indigo-200 to-blue-300 dark:from-indigo-950 dark:via-slate-900 dark:to-gray-900 hero-background transition-colors duration-300">
+          {/* Add decorative background elements for light theme */}
+          {theme === "light" && (
+            <>
+              <div className="absolute top-0 left-0 w-full h-full opacity-40 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-purple-500 via-transparent to-transparent"></div>
+              <div className="absolute bottom-0 right-0 w-full h-full opacity-40 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-blue-500 via-transparent to-transparent"></div>
+              <div className="absolute inset-0 bg-[url('/Interlocking Dimensions.png')] bg-repeat opacity-10"></div>
+            </>
+          )}
+        </div>
 
         {/* Gradient Overlay for Text Readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-purple-300/40 via-indigo-200/30 to-transparent dark:from-indigo-900/60 dark:via-slate-900/40 dark:to-transparent hero-overlay transition-colors duration-300"></div>
 
         {/* Content - Reduced height */}
         <div className="relative z-10 flex flex-col items-center justify-center min-h-[280px] md:min-h-[320px] px-4 py-12 md:py-16">
-          {/* Moving clouds for light theme */}
+          {/* Add floating shapes for light theme */}
           {theme === "light" && (
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <div className="cloud cloud-1"></div>
               <div className="cloud cloud-2"></div>
               <div className="cloud cloud-3"></div>
+
+              {/* Add decorative floating shapes */}
+              <div className="absolute w-24 h-24 rounded-full bg-purple-200 opacity-30 top-[15%] left-[10%] animate-float-slow"></div>
+              <div className="absolute w-16 h-16 rounded-full bg-blue-200 opacity-30 top-[25%] right-[15%] animate-float"></div>
+              <div className="absolute w-20 h-20 rounded-full bg-indigo-200 opacity-30 bottom-[30%] left-[20%] animate-float-slower"></div>
+              <div className="absolute w-32 h-12 rounded-full bg-purple-100 opacity-20 top-[40%] right-[25%] animate-float-slow"></div>
             </div>
           )}
 
