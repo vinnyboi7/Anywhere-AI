@@ -3,9 +3,9 @@ import { Github, Mail } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer className="bg-gray-900 dark:bg-gray-950 text-gray-100 py-8 mt-16 transition-colors duration-300">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <footer className="bg-gray-900 dark:bg-gray-950 text-gray-100 py-8 pb-16 w-full mt-16 transition-colors duration-300">
+      <div className="w-full">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4 md:px-8">
           {/* Left section */}
           <div className="flex flex-col space-y-2">
             <p className="text-sm">© 2025 Welcome Anywhere</p>
