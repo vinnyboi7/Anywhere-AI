@@ -90,6 +90,7 @@ export default function WelcomeForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [guideData, setGuideData] = useState<GuideResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [locationInfo, setLocationInfo] = useState<{ city: string; state: string } | null>(null)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -112,6 +113,17 @@ export default function WelcomeForm() {
     try {
       const data = await generateGuide(values)
       setGuideData(data)
+
+      // Extract location from the response if available
+      if (data.welcomeMessage) {
+        const cityMatch = data.welcomeMessage.match(/Welcome to ([^,]+),/)
+        if (cityMatch && cityMatch[1]) {
+          setLocationInfo({
+            city: cityMatch[1].trim(),
+            state: data.welcomeMessage.includes(", ") ? data.welcomeMessage.split(", ")[1].split("!")[0].trim() : "",
+          })
+        }
+      }
     } catch (err) {
       console.error("Error generating guide:", err)
       setError("We couldn't generate your personalized guide at this moment. Please try again later.")
@@ -133,11 +145,11 @@ export default function WelcomeForm() {
               <div className="space-y-2">
                 <Label htmlFor="location" className="flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-sky-600" />
-                  City or Zip Code
+                  City, State or ZIP Code
                 </Label>
                 <Input
                   id="location"
-                  placeholder="Enter your city or zip code"
+                  placeholder="Enter your city, state or 5-digit ZIP code"
                   {...form.register("location")}
                   className="focus-visible:ring-sky-500"
                 />
@@ -154,7 +166,7 @@ export default function WelcomeForm() {
                 </Label>
                 <MultiSelect
                   options={interestOptions}
-                  selected={form.watch("interests")}
+                  selected={form.getValues("interests")}
                   onChange={(selected) => form.setValue("interests", selected, { shouldValidate: true })}
                   placeholder="Select your interests"
                 />
@@ -171,7 +183,7 @@ export default function WelcomeForm() {
                 </Label>
                 <MultiSelect
                   options={foodOptions}
-                  selected={form.watch("foodPreferences")}
+                  selected={form.getValues("foodPreferences")}
                   onChange={(selected) => form.setValue("foodPreferences", selected, { shouldValidate: true })}
                   placeholder="Select food preferences"
                 />
@@ -186,10 +198,7 @@ export default function WelcomeForm() {
                   <Globe className="h-4 w-4 text-sky-600" />
                   Preferred language for support
                 </Label>
-                <Select
-                  onValueChange={(value) => form.setValue("language", value, { shouldValidate: true })}
-                  defaultValue={form.watch("language")}
-                >
+                <Select onValueChange={(value) => form.setValue("language", value, { shouldValidate: true })}>
                   <SelectTrigger className="focus:ring-sky-500">
                     <SelectValue placeholder="Select a language" />
                   </SelectTrigger>
@@ -212,10 +221,7 @@ export default function WelcomeForm() {
                   <Home className="h-4 w-4 text-sky-600" />
                   Housing preference
                 </Label>
-                <Select
-                  onValueChange={(value) => form.setValue("housing", value, { shouldValidate: true })}
-                  defaultValue={form.watch("housing")}
-                >
+                <Select onValueChange={(value) => form.setValue("housing", value, { shouldValidate: true })}>
                   <SelectTrigger className="focus:ring-sky-500">
                     <SelectValue placeholder="Select housing type" />
                   </SelectTrigger>
@@ -253,14 +259,14 @@ export default function WelcomeForm() {
               <div className="space-y-2">
                 <Label htmlFor="budget" className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4 text-sky-600" />
-                  Budget range per month: ${form.watch("budget")}
+                  Budget range per month: ${form.getValues("budget")}
                 </Label>
                 <Slider
                   id="budget"
                   min={0}
                   max={5000}
                   step={100}
-                  value={[form.watch("budget")]}
+                  value={[form.getValues("budget")]}
                   onValueChange={(value) => form.setValue("budget", value[0], { shouldValidate: true })}
                   className="py-4"
                 />
@@ -274,7 +280,7 @@ export default function WelcomeForm() {
                 </Label>
                 <MultiSelect
                   options={supportOptions}
-                  selected={form.watch("support") || []}
+                  selected={form.getValues("support") || []}
                   onChange={(selected) => form.setValue("support", selected, { shouldValidate: true })}
                   placeholder="Select support needs"
                 />
@@ -307,7 +313,7 @@ export default function WelcomeForm() {
         </CardContent>
       </Card>
 
-      {guideData && <GuideResults data={guideData} location={form.getValues().location} />}
+      {guideData && <GuideResults data={guideData} location={locationInfo?.city || form.getValues().location} />}
     </div>
   )
 }

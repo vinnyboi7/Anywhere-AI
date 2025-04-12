@@ -1,91 +1,36 @@
-import { generateGuide } from "@/app/actions"
-
-// Function to format our internal response to match the expected API format
-function formatResponseForAPI(data: any): any {
-  return {
-    welcomeMessage: data.welcomeMessage,
-    housing: data.housingInfo,
-    jobs: data.jobListings.map((job: any) => ({
-      title: job.title,
-      company: job.company,
-      link: job.link,
-    })),
-    events: data.events.map((event: any) => ({
-      name: event.name,
-      location: event.location,
-      time: event.date,
-    })),
-    food: [data.foodRecommendations],
-    languageHelp: data.languageLearningHelp,
-    support: data.supportServices,
-  }
-}
-
-export async function GET(request: Request) {
-  // This is a placeholder for a REST API endpoint
-  return new Response(JSON.stringify({ message: "Use POST method with form data to generate a guide" }), {
-    headers: {
-      "Content-Type": "application/json",
-      // Add CORS headers
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    },
-  })
-}
+import { NextResponse } from "next/server"
+import { generateGuide } from "@/lib/guide-generator"
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
 
-    // Validate the request body
-    const formData = {
-      location: body.location || "",
-      interests: Array.isArray(body.hobbies) ? body.hobbies : [],
-      foodPreferences: Array.isArray(body.foodPreferences) ? body.foodPreferences : ["Anything"],
-      language: body.preferredLanguage || "English",
-      housing: body.housingPreference || "Apartment",
-      jobField: body.jobType || "",
-      budget: typeof body.budgetRange === "number" ? body.budgetRange : 1000,
-      support: Array.isArray(body.supportNeeds) ? body.supportNeeds : [],
+    // Validate required fields
+    if (!body.zipCode) {
+      return NextResponse.json({ error: "ZIP code is required" }, { status: 400 })
     }
 
-    // Generate the guide
-    const guideData = await generateGuide(formData as any)
-
-    // Format the response to match the expected API format
-    const formattedResponse = formatResponseForAPI(guideData)
-
-    return new Response(JSON.stringify(formattedResponse), {
-      headers: {
-        "Content-Type": "application/json",
-        // Add CORS headers
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-      },
+    // Generate the personalized guide
+    const guideData = await generateGuide({
+      zipCode: body.zipCode,
+      hobbies: Array.isArray(body.hobbies) ? body.hobbies : [],
+      foodPreferences: Array.isArray(body.foodPreferences) ? body.foodPreferences : ["Anything"],
+      preferredLanguage: body.preferredLanguage || "English",
+      housingPreference: body.housingPreference || "Apartment",
+      jobType: body.jobType || "",
+      budgetRange: typeof body.budgetRange === "number" ? body.budgetRange : 1000,
+      supportNeeds: Array.isArray(body.supportNeeds) ? body.supportNeeds : [],
     })
-  } catch (error) {
-    console.error("Error handling POST request:", error)
-    return new Response(JSON.stringify({ error: "Failed to generate guide" }), {
-      status: 500,
-      headers: {
-        "Content-Type": "application/json",
-        // Add CORS headers
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-      },
-    })
+
+    return NextResponse.json(guideData)
+  } catch (error: any) {
+    console.error("Error generating guide:", error)
+    return NextResponse.json({ error: error.message || "Failed to generate guide" }, { status: 500 })
   }
 }
 
-export async function OPTIONS(request: Request) {
-  return new Response(null, {
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    },
+export async function GET(request: Request) {
+  return NextResponse.json({
+    message: "Use POST method with user preferences to generate a personalized guide",
   })
 }

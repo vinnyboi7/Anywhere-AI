@@ -1,8 +1,7 @@
 "use server"
 
 import { z } from "zod"
-import { generateText } from "ai"
-import { openai } from "@ai-sdk/openai"
+import { generateGuide as generateGuideFromLib } from "@/lib/guide-generator"
 
 // Define the schema for the form data
 const formSchema = z.object({
@@ -47,6 +46,48 @@ export type GuideResponse = {
   supportServices: string
   jobListings: JobListing[]
   events: Event[]
+}
+
+export async function generateGuide(formData: z.infer<typeof formSchema>): Promise<GuideResponse> {
+  try {
+    // Check if the location is a ZIP code (5 digits)
+    const isZipCode = /^\d{5}$/.test(formData.location)
+    const zipCode = isZipCode ? formData.location : "75201" // Default to Dallas if not a ZIP
+
+    // Generate the guide using our new library function
+    const guideData = await generateGuideFromLib({
+      zipCode,
+      hobbies: formData.interests,
+      foodPreferences: formData.foodPreferences,
+      preferredLanguage: formData.language,
+      housingPreference: formData.housing,
+      jobType: formData.jobField,
+      budgetRange: formData.budget,
+      supportNeeds: formData.support || [],
+    })
+
+    // Generate mock job listings based on the location and job type
+    const jobListings = getMockJobs(guideData.locationInfo.city, formData.jobField)
+
+    // Generate mock events based on the location and hobbies
+    const events = getMockEvents(guideData.locationInfo.city, formData.interests)
+
+    // Format the response to match the expected GuideResponse type
+    return {
+      welcomeMessage: guideData.welcomeMessage,
+      housingInfo: guideData.housingResources.recommendations,
+      jobSuggestions: guideData.jobResources.recommendations,
+      eventsOrHobbySpots: guideData.eventsOrHobbies.recommendations,
+      foodRecommendations: guideData.foodSuggestions.recommendations,
+      languageLearningHelp: guideData.languageHelp,
+      supportServices: guideData.supportServices.recommendations,
+      jobListings,
+      events,
+    }
+  } catch (error: any) {
+    console.error("Error generating guide:", error)
+    throw new Error(`Failed to generate guide: ${error.message}`)
+  }
 }
 
 /**
@@ -189,7 +230,7 @@ function getMockJobs(location: string, jobType: string): JobListing[] {
     location: `${location}`,
     salary: `$${60000 + Math.floor(Math.random() * 60000)}`,
     description: job.description,
-    link: `https://jobs.example.com/${location.toLowerCase().replace(/\s+/g, "-")}/${job.title.toLowerCase().replace(/\s+/g, "-")}`,
+    link: `https://www.indeed.com/jobs?q=${encodeURIComponent(job.title)}&l=${encodeURIComponent(location)}`,
   }))
 }
 
@@ -352,215 +393,18 @@ function getMockEvents(location: string, hobbies: string[]): Event[] {
       day: "numeric",
     })
 
+    // Create a more location-specific event name
+    const locationSpecificName = `${location} ${event.name}`
+
     selectedEvents.push({
-      name: event.name,
+      name: locationSpecificName,
       date: formattedDate,
       location: `${location} ${["Park", "Community Center", "Downtown", "Convention Center", "Library"][Math.floor(Math.random() * 5)]}`,
       description: event.description,
       category: category,
-      link: `https://events.example.com/${location.toLowerCase().replace(/\s+/g, "-")}/${event.name.toLowerCase().replace(/\s+/g, "-")}`,
+      link: `https://www.eventbrite.com/d/${encodeURIComponent(location)}/events/`,
     })
   }
 
   return selectedEvents
-}
-
-// Function to generate mock data for demonstration purposes
-function generateMockGuide(location: string, jobType: string, hobbies: string[]): GuideResponse {
-  // Get mock jobs and events
-  const jobListings = getMockJobs(location, jobType)
-  const events = getMockEvents(location, hobbies)
-
-  return {
-    welcomeMessage: `Welcome to ${location}! We're excited to help you settle into your new home. This guide has been customized based on your preferences to help you navigate the city and find resources that match your needs.`,
-    housingInfo: `Based on your preferences, you might want to check out neighborhoods like Downtown, Riverside, and Oakwood in ${location}. These areas offer a variety of housing options within your budget range. Local real estate websites like ${location}Homes.com and ApartmentFinder can help you find specific listings.`,
-    jobSuggestions: `${location} has a growing job market in your field. Check out the job listings below for opportunities that match your experience. You can also attend the monthly networking events at the Innovation Hub to connect with local professionals.`,
-    eventsOrHobbySpots: `For your interests, ${location} offers several options. Check out the upcoming events section below for activities that match your hobbies. The Community Center also hosts weekly meetups, while the ${location} Park has great trails for outdoor activities.`,
-    foodRecommendations: `Based on your food preferences, you might enjoy restaurants like Green Plate (vegetarian), Spice Garden (offers halal options), and The Local Table (farm-to-table with diverse menu). The ${location} Farmers Market on weekends is also worth checking out.`,
-    languageLearningHelp: `For language resources, the ${location} Community College offers affordable classes. The International Center provides conversation partners, and the public library has free language learning software and meetups.`,
-    supportServices: `For support services, you can contact the ${location} Welcome Center at 555-123-4567. They offer orientation sessions for newcomers. The Community Services Office can connect you with specific resources based on your needs.`,
-    jobListings,
-    events,
-  }
-}
-
-// This function formats our internal response to match the expected API format
-function formatResponseForAPI(data: GuideResponse): any {
-  return {
-    welcomeMessage: data.welcomeMessage,
-    housing: data.housingInfo,
-    jobs: data.jobListings.map((job) => ({
-      title: job.title,
-      company: job.company,
-      link: job.link,
-    })),
-    events: data.events.map((event) => ({
-      name: event.name,
-      location: event.location,
-      time: event.date,
-    })),
-    food: [data.foodRecommendations],
-    languageHelp: data.languageLearningHelp,
-    support: data.supportServices,
-  }
-}
-
-export async function generateGuide(formData: z.infer<typeof formSchema>): Promise<GuideResponse> {
-  try {
-    // Generate mock jobs and events
-    const jobListings = getMockJobs(formData.location, formData.jobField)
-    const events = getMockEvents(formData.location, formData.interests)
-
-    // Check if OpenAI API key is available
-    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === "99") {
-      console.warn("Valid OpenAI API key not found. Using mock data instead.")
-      return generateMockGuide(formData.location, formData.jobField, formData.interests)
-    }
-
-    // Format job listings and events for the prompt
-    const jobListingsText = jobListings
-      .map((job) => `- ${job.title} at ${job.company}: ${job.description} Salary: ${job.salary}`)
-      .join("\n")
-
-    const eventsText = events
-      .map((event) => `- ${event.name} on ${event.date} at ${event.location}: ${event.description}`)
-      .join("\n")
-
-    // Create prompt for OpenAI with job listings and events
-    const prompt = `
-      Generate a personalized city guide for someone moving to ${formData.location}.
-      
-      About the person:
-      - Hobbies and interests: ${formData.interests.join(", ")}
-      - Food preferences: ${formData.foodPreferences.join(", ")}
-      - Preferred language: ${formData.language}
-      - Housing preference: ${formData.housing}
-      - Job type they're looking for: ${formData.jobField}
-      - Monthly budget: ${formData.budget}
-      ${formData.support && formData.support.length > 0 ? `- Support needs: ${formData.support.join(", ")}` : ""}
-      
-      Here are some job listings in the area that match their interests:
-      ${jobListingsText}
-      
-      Here are some upcoming events in the area that match their hobbies:
-      ${eventsText}
-      
-      Create a comprehensive guide with the following sections:
-      1. Welcome Message: A personalized welcome to the city
-      2. Housing Info: Recommendations for neighborhoods and housing options that match their preferences and budget
-      3. Job Suggestions: Local opportunities in their field (reference the job listings provided)
-      4. Events or Hobby Spots: Places and events related to their interests (reference the events provided)
-      5. Food Recommendations: Local restaurants and food options matching their preferences
-      6. Language Learning Help: Resources for language learning if needed
-      7. Support Services: Information about relevant support services they might need
-      
-      Format the response as a JSON object with these sections as keys.
-    `
-
-    try {
-      // Generate response using OpenAI
-      const { text } = await generateText({
-        model: openai("gpt-4o"),
-        prompt,
-        system:
-          "You are a helpful assistant that creates personalized city guides. Your responses should be informative, welcoming, and structured as JSON. Include specific, actionable recommendations based on the user's preferences.",
-      })
-
-      // Parse the response as JSON
-      try {
-        // The AI might return text with markdown code blocks, so we need to extract just the JSON
-        const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/```\n([\s\S]*?)\n```/) || [null, text]
-        const jsonString = jsonMatch[1] || text
-        const guideData = JSON.parse(jsonString.trim())
-
-        // Add the job listings and events to the response
-        return {
-          ...guideData,
-          jobListings,
-          events,
-        }
-      } catch (parseError) {
-        console.error("Error parsing AI response:", parseError)
-        // If parsing fails, use mock data
-        return generateMockGuide(formData.location, formData.jobField, formData.interests)
-      }
-    } catch (aiError) {
-      console.error("Error calling OpenAI API:", aiError)
-      // If OpenAI API call fails, use mock data
-      return generateMockGuide(formData.location, formData.jobField, formData.interests)
-    }
-  } catch (error) {
-    console.error("Error generating guide:", error)
-    throw new Error("Failed to generate guide. Please try again later.")
-  }
-}
-
-// This API route handler can be used if you want to expose the guide generation as a REST API
-export async function GET(request: Request) {
-  // This is a placeholder for a REST API endpoint
-  return new Response(JSON.stringify({ message: "Use POST method with form data to generate a guide" }), {
-    headers: {
-      "Content-Type": "application/json",
-      // Add CORS headers
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    },
-  })
-}
-
-export async function POST(request: Request) {
-  try {
-    const body = await request.json()
-
-    // Validate the request body
-    const formData = {
-      location: body.location || "",
-      interests: body.interests || [],
-      foodPreferences: body.foodPreferences || [],
-      language: body.language || "",
-      housing: body.housing || "",
-      jobField: body.jobType || "", // Map jobType to jobField
-      budget: body.budget || 1000,
-      support: body.supportNeeds || [],
-    }
-
-    // Generate the guide
-    const guideData = await generateGuide(formData as any)
-
-    // Format the response to match the expected API format
-    const formattedResponse = formatResponseForAPI(guideData)
-
-    return new Response(JSON.stringify(formattedResponse), {
-      headers: {
-        "Content-Type": "application/json",
-        // Add CORS headers
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-      },
-    })
-  } catch (error) {
-    console.error("Error handling POST request:", error)
-    return new Response(JSON.stringify({ error: "Failed to generate guide" }), {
-      status: 500,
-      headers: {
-        "Content-Type": "application/json",
-        // Add CORS headers
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-      },
-    })
-  }
-}
-
-export async function OPTIONS(request: Request) {
-  return new Response(null, {
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    },
-  })
 }

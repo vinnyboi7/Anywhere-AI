@@ -59,10 +59,10 @@
     "vaul": "^0.9.6",
     "zod": "latest",
     "@emotion/is-prop-valid": "latest",
-    "ai": "latest",
-    "@ai-sdk/openai": "latest",
     "framer-motion": "latest",
-    "react-intersection-observer": "latest"
+    "react-intersection-observer": "latest",
+    "@ai-sdk/openai": "latest",
+    "ai": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",
