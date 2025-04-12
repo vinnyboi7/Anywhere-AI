@@ -16,7 +16,6 @@ import { MapPin, Briefcase, Home, Heart, Globe, Utensils, DollarSign, HelpCircle
 import { generateGuide, type GuideResponse } from "@/app/actions"
 import { GuideResults } from "@/components/guide-results"
 import { Loader2 } from "lucide-react"
-import { motion } from "framer-motion"
 
 const formSchema = z.object({
   location: z.string().min(2, { message: "Please enter a valid location" }),
@@ -92,6 +91,7 @@ export default function WelcomeForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [guideData, setGuideData] = useState<GuideResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [budgetDisplay, setBudgetDisplay] = useState(1000)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -125,31 +125,22 @@ export default function WelcomeForm() {
   return (
     <div className="max-w-4xl mx-auto">
       {/* Hero Section */}
-      <motion.div
-        className="text-center mb-12 py-12"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
+      <div className="text-center mb-12 py-12">
         <div className="text-6xl mb-4 inline-block">🏙️</div>
         <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-500 text-transparent bg-clip-text">
           Moving to a New City?
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">Let us create your personalized welcome guide.</p>
-      </motion.div>
+      </div>
 
       {/* Form Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-      >
+      <div>
         <Card className="shadow-lg border-0 overflow-hidden bg-white rounded-xl">
           <CardContent className="p-6 md:p-8">
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <div className="space-y-6">
                 {/* Location */}
-                <motion.div className="space-y-2" whileHover={{ scale: 1.01 }} transition={{ duration: 0.2 }}>
+                <div className="space-y-2">
                   <Label htmlFor="location" className="flex items-center gap-2 text-base font-medium">
                     <MapPin className="h-5 w-5 text-purple-500" />
                     Where are you moving to?
@@ -163,17 +154,17 @@ export default function WelcomeForm() {
                   {form.formState.errors.location && (
                     <p className="text-sm text-red-500">{form.formState.errors.location.message}</p>
                   )}
-                </motion.div>
+                </div>
 
                 {/* Interests */}
-                <motion.div className="space-y-2" whileHover={{ scale: 1.01 }} transition={{ duration: 0.2 }}>
+                <div className="space-y-2">
                   <Label className="flex items-center gap-2 text-base font-medium">
                     <Heart className="h-5 w-5 text-purple-500" />
                     What are your interests or hobbies?
                   </Label>
                   <MultiSelect
                     options={interestOptions}
-                    selected={form.watch("interests")}
+                    selected={form.getValues("interests")}
                     onChange={(selected) => form.setValue("interests", selected, { shouldValidate: true })}
                     placeholder="Select your interests"
                     className="rounded-lg"
@@ -181,38 +172,22 @@ export default function WelcomeForm() {
                   {form.formState.errors.interests && (
                     <p className="text-sm text-red-500">{form.formState.errors.interests.message}</p>
                   )}
-                </motion.div>
+                </div>
 
                 {/* Food Preferences */}
-                <motion.div className="space-y-4" whileHover={{ scale: 1.01 }} transition={{ duration: 0.2 }}>
+                <div className="space-y-4">
                   <Label className="flex items-center gap-2 text-base font-medium">
                     <Utensils className="h-5 w-5 text-purple-500" />
                     What kind of food do you enjoy?
                   </Label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {foodOptions.map((option) => (
-                      <div
-                        key={option.value}
-                        className={`
-                          flex items-center space-x-2 rounded-lg border p-3 cursor-pointer transition-colors
-                          ${
-                            form.watch("foodPreferences").includes(option.value)
-                              ? "bg-purple-50 border-purple-200"
-                              : "hover:bg-gray-50 border-gray-200"
-                          }
-                        `}
-                        onClick={() => {
-                          const current = form.watch("foodPreferences")
-                          const updated = current.includes(option.value)
-                            ? current.filter((item) => item !== option.value)
-                            : [...current, option.value]
-                          form.setValue("foodPreferences", updated, { shouldValidate: true })
-                        }}
-                      >
+                      <div key={option.value} className="flex items-center space-x-2 rounded-lg border p-3">
                         <Checkbox
-                          checked={form.watch("foodPreferences").includes(option.value)}
+                          id={`food-${option.value}`}
+                          checked={form.getValues("foodPreferences").includes(option.value)}
                           onCheckedChange={(checked) => {
-                            const current = form.watch("foodPreferences")
+                            const current = form.getValues("foodPreferences")
                             const updated = checked
                               ? [...current, option.value]
                               : current.filter((item) => item !== option.value)
@@ -220,27 +195,29 @@ export default function WelcomeForm() {
                           }}
                           className="data-[state=checked]:bg-purple-500 data-[state=checked]:border-purple-500"
                         />
-                        <label className="text-sm font-medium leading-none cursor-pointer">{option.label}</label>
+                        <label
+                          htmlFor={`food-${option.value}`}
+                          className="text-sm font-medium leading-none cursor-pointer"
+                        >
+                          {option.label}
+                        </label>
                       </div>
                     ))}
                   </div>
                   {form.formState.errors.foodPreferences && (
                     <p className="text-sm text-red-500">{form.formState.errors.foodPreferences.message}</p>
                   )}
-                </motion.div>
+                </div>
 
                 {/* Two Column Layout for Language and Housing */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Language */}
-                  <motion.div className="space-y-2" whileHover={{ scale: 1.01 }} transition={{ duration: 0.2 }}>
+                  <div className="space-y-2">
                     <Label htmlFor="language" className="flex items-center gap-2 text-base font-medium">
                       <Globe className="h-5 w-5 text-purple-500" />
                       Preferred language
                     </Label>
-                    <Select
-                      onValueChange={(value) => form.setValue("language", value, { shouldValidate: true })}
-                      defaultValue={form.watch("language")}
-                    >
+                    <Select onValueChange={(value) => form.setValue("language", value, { shouldValidate: true })}>
                       <SelectTrigger className="h-12 rounded-lg border-gray-200 focus:ring-purple-500">
                         <SelectValue placeholder="Select a language" />
                       </SelectTrigger>
@@ -255,18 +232,15 @@ export default function WelcomeForm() {
                     {form.formState.errors.language && (
                       <p className="text-sm text-red-500">{form.formState.errors.language.message}</p>
                     )}
-                  </motion.div>
+                  </div>
 
                   {/* Housing */}
-                  <motion.div className="space-y-2" whileHover={{ scale: 1.01 }} transition={{ duration: 0.2 }}>
+                  <div className="space-y-2">
                     <Label htmlFor="housing" className="flex items-center gap-2 text-base font-medium">
                       <Home className="h-5 w-5 text-purple-500" />
                       Housing preference
                     </Label>
-                    <Select
-                      onValueChange={(value) => form.setValue("housing", value, { shouldValidate: true })}
-                      defaultValue={form.watch("housing")}
-                    >
+                    <Select onValueChange={(value) => form.setValue("housing", value, { shouldValidate: true })}>
                       <SelectTrigger className="h-12 rounded-lg border-gray-200 focus:ring-purple-500">
                         <SelectValue placeholder="Select housing type" />
                       </SelectTrigger>
@@ -281,11 +255,11 @@ export default function WelcomeForm() {
                     {form.formState.errors.housing && (
                       <p className="text-sm text-red-500">{form.formState.errors.housing.message}</p>
                     )}
-                  </motion.div>
+                  </div>
                 </div>
 
                 {/* Job Field */}
-                <motion.div className="space-y-2" whileHover={{ scale: 1.01 }} transition={{ duration: 0.2 }}>
+                <div className="space-y-2">
                   <Label htmlFor="jobField" className="flex items-center gap-2 text-base font-medium">
                     <Briefcase className="h-5 w-5 text-purple-500" />
                     What type of job are you looking for?
@@ -299,49 +273,52 @@ export default function WelcomeForm() {
                   {form.formState.errors.jobField && (
                     <p className="text-sm text-red-500">{form.formState.errors.jobField.message}</p>
                   )}
-                </motion.div>
+                </div>
 
                 {/* Budget */}
-                <motion.div className="space-y-4" whileHover={{ scale: 1.01 }} transition={{ duration: 0.2 }}>
+                <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <Label htmlFor="budget" className="flex items-center gap-2 text-base font-medium">
                       <DollarSign className="h-5 w-5 text-purple-500" />
                       Monthly budget
                     </Label>
-                    <span className="text-lg font-semibold text-purple-600">${form.watch("budget")}</span>
+                    <span className="text-lg font-semibold text-purple-600">${budgetDisplay}</span>
                   </div>
                   <Slider
                     id="budget"
                     min={0}
                     max={5000}
                     step={100}
-                    value={[form.watch("budget")]}
-                    onValueChange={(value) => form.setValue("budget", value[0], { shouldValidate: true })}
+                    value={[budgetDisplay]}
+                    onValueChange={(value) => {
+                      setBudgetDisplay(value[0])
+                      form.setValue("budget", value[0], { shouldValidate: true })
+                    }}
                     className="py-4"
                   />
                   <div className="flex justify-between text-sm text-gray-500">
                     <span>$0</span>
                     <span>$5,000+</span>
                   </div>
-                </motion.div>
+                </div>
 
                 {/* Support Needed */}
-                <motion.div className="space-y-2" whileHover={{ scale: 1.01 }} transition={{ duration: 0.2 }}>
+                <div className="space-y-2">
                   <Label className="flex items-center gap-2 text-base font-medium">
                     <HelpCircle className="h-5 w-5 text-purple-500" />
                     Any specific support you're looking for?
                   </Label>
                   <MultiSelect
                     options={supportOptions}
-                    selected={form.watch("support") || []}
+                    selected={form.getValues("support") || []}
                     onChange={(selected) => form.setValue("support", selected, { shouldValidate: true })}
                     placeholder="Select support needs"
                     className="rounded-lg"
                   />
-                </motion.div>
+                </div>
               </div>
 
-              <motion.div className="flex justify-center pt-6" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+              <div className="flex justify-center pt-6">
                 <Button
                   type="submit"
                   className="bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white px-10 py-6 rounded-full text-lg font-medium transition-all shadow-md hover:shadow-lg"
@@ -356,7 +333,7 @@ export default function WelcomeForm() {
                     <>✨ Generate My Guide</>
                   )}
                 </Button>
-              </motion.div>
+              </div>
 
               {error && (
                 <div className="text-center mt-4">
@@ -366,12 +343,12 @@ export default function WelcomeForm() {
             </form>
           </CardContent>
         </Card>
-      </motion.div>
+      </div>
 
       {guideData && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+        <div className="mt-8">
           <GuideResults data={guideData} location={form.getValues().location} />
-        </motion.div>
+        </div>
       )}
     </div>
   )
