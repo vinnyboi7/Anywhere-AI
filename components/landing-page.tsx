@@ -3,6 +3,7 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Compass, Home, Briefcase, Heart, Globe, ArrowRight } from "lucide-react"
+import { Footer } from "@/components/footer"
 
 export default function LandingPage() {
   return (
@@ -87,16 +88,10 @@ export default function LandingPage() {
             </div>
           </div>
         </motion.div>
-
-        <motion.footer
-          className="mt-16 text-center text-slate-500 dark:text-slate-400 text-sm border-t border-purple-100 dark:border-purple-900/30 pt-6 w-full max-w-md"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.6 }}
-        >
-          <p>&copy; {new Date().getFullYear()} Welcome Anywhere. All rights reserved.</p>
-        </motion.footer>
       </div>
+
+      {/* Import the Footer component at the top of the file */}
+      <Footer />
     </div>
   )
 }

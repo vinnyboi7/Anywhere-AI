@@ -148,6 +148,126 @@ const buildingShadowStyles = `
     );
     filter: drop-shadow(0 0 3px rgba(255, 255, 200, 0.5));
   }
+
+  /* Cloud animations */
+  .cloud {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    filter: blur(10px);
+  }
+  
+  .cloud-1 {
+    width: 100px;
+    height: 40px;
+    top: 20%;
+    left: -100px;
+    animation: cloud-move 30s linear infinite;
+  }
+  
+  .cloud-2 {
+    width: 150px;
+    height: 50px;
+    top: 40%;
+    left: -150px;
+    animation: cloud-move 40s linear infinite;
+    animation-delay: 5s;
+  }
+  
+  .cloud-3 {
+    width: 80px;
+    height: 30px;
+    top: 60%;
+    left: -80px;
+    animation: cloud-move 25s linear infinite;
+    animation-delay: 12s;
+  }
+  
+  @keyframes cloud-move {
+    0% {
+      left: -150px;
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.8;
+    }
+    90% {
+      opacity: 0.8;
+    }
+    100% {
+      left: 100%;
+      opacity: 0;
+    }
+  }
+  
+  /* Shooting star animations */
+  .shooting-star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0;
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+    transform: rotate(-45deg);
+  }
+  
+  .shooting-star::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.8), transparent);
+    transform: translateX(-100%);
+  }
+  
+  .star-1 {
+    top: 20%;
+    left: 80%;
+    animation: shooting 4s linear infinite;
+    animation-delay: 1s;
+  }
+  
+  .star-2 {
+    top: 15%;
+    left: 60%;
+    animation: shooting 6s linear infinite;
+    animation-delay: 4s;
+  }
+  
+  .star-3 {
+    top: 30%;
+    left: 70%;
+    animation: shooting 5s linear infinite;
+    animation-delay: 7s;
+  }
+  
+  .star-4 {
+    top: 10%;
+    left: 50%;
+    animation: shooting 7s linear infinite;
+    animation-delay: 10s;
+  }
+  
+  @keyframes shooting {
+    0% {
+      transform: rotate(-45deg) translateX(0);
+      opacity: 0;
+    }
+    5% {
+      opacity: 1;
+    }
+    20% {
+      transform: rotate(-45deg) translateX(-200px);
+      opacity: 0;
+    }
+    100% {
+      transform: rotate(-45deg) translateX(-200px);
+      opacity: 0;
+    }
+  }
 `
 
 const formSchema = z.object({
@@ -292,6 +412,24 @@ export default function WelcomeForm() {
 
         {/* Content - Reduced height */}
         <div className="relative z-10 flex flex-col items-center justify-center min-h-[280px] md:min-h-[320px] px-4 py-12 md:py-16">
+          {/* Moving clouds for light theme */}
+          {theme === "light" && (
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <div className="cloud cloud-1"></div>
+              <div className="cloud cloud-2"></div>
+              <div className="cloud cloud-3"></div>
+            </div>
+          )}
+
+          {/* Shooting stars for dark theme */}
+          {theme === "dark" && (
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <div className="shooting-star star-1"></div>
+              <div className="shooting-star star-2"></div>
+              <div className="shooting-star star-3"></div>
+              <div className="shooting-star star-4"></div>
+            </div>
+          )}
           {/* Moon in top left */}
           <div
             className="absolute top-4 left-4 w-12 h-12 rounded-full cursor-pointer z-20 transition-all duration-300 flex items-center justify-center"
@@ -655,15 +793,15 @@ export default function WelcomeForm() {
           </CardContent>
         </Card>
       </div>
-
       {guideData && (
         <div className="mt-8">
           <GuideResults data={guideData} location={locationInfo?.city || form.getValues().location} />
         </div>
       )}
 
-      {/* Footer */}
-      <Footer />
+      <div className="w-full mt-16">
+        <Footer />
+      </div>
     </div>
   )
 }
