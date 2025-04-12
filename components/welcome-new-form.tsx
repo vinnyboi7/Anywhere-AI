@@ -135,13 +135,107 @@ export default function WelcomeForm() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      {/* Hero Section */}
-      <div className="text-center mb-12 py-12">
-        <div className="text-6xl mb-4 inline-block">🏙️</div>
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-500 text-transparent bg-clip-text">
-          Moving to a New City?
-        </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">Let us create your personalized welcome guide.</p>
+      {/* Hero Section with Animated Background */}
+      <div className="text-center mb-12 relative rounded-lg overflow-hidden bg-purple-700" style={{ height: "250px" }}>
+        {/* Animated gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-700 via-pink-600 to-indigo-700 animate-gradient-x"></div>
+
+        {/* Animated floating blobs */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="blob blob-1 bg-purple-400/20"></div>
+          <div className="blob blob-2 bg-pink-400/20"></div>
+          <div className="blob blob-3 bg-indigo-400/20"></div>
+          <div className="blob blob-4 bg-purple-300/20"></div>
+        </div>
+
+        {/* Animated City Buildings */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 z-[5] overflow-hidden">
+          {/* First group of buildings */}
+          <div
+            className="absolute bottom-0 left-[5%] w-10 bg-black/20 rounded-t-sm animate-float-slow"
+            style={{ height: "80px" }}
+          ></div>
+          <div
+            className="absolute bottom-0 left-[9%] w-14 bg-black/25 rounded-t-sm animate-float-slower"
+            style={{ height: "110px" }}
+          ></div>
+          <div
+            className="absolute bottom-0 left-[15%] w-8 bg-black/15 rounded-t-sm animate-float"
+            style={{ height: "60px" }}
+          ></div>
+
+          {/* Empire State style */}
+          <div
+            className="absolute bottom-0 left-[22%] w-12 bg-black/30 rounded-t-sm animate-float-slow"
+            style={{ height: "150px" }}
+          >
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-12 bg-black/30"></div>
+          </div>
+
+          {/* Middle buildings */}
+          <div
+            className="absolute bottom-0 left-[30%] w-16 bg-black/20 rounded-t-sm animate-float-slower"
+            style={{ height: "90px" }}
+          ></div>
+          <div
+            className="absolute bottom-0 left-[36%] w-10 bg-black/15 rounded-t-sm animate-float"
+            style={{ height: "70px" }}
+          ></div>
+          <div
+            className="absolute bottom-0 left-[42%] w-14 bg-black/25 rounded-t-sm animate-float-slow"
+            style={{ height: "120px" }}
+          ></div>
+
+          {/* Modern skyscraper */}
+          <div
+            className="absolute bottom-0 left-[50%] w-12 bg-black/30 rounded-t-sm animate-float-slower"
+            style={{ height: "160px" }}
+          >
+            <div className="absolute top-0 left-0 right-0 h-20 bg-black/10 rounded-t-sm"></div>
+          </div>
+
+          {/* Right side buildings */}
+          <div
+            className="absolute bottom-0 left-[58%] w-8 bg-black/20 rounded-t-sm animate-float"
+            style={{ height: "70px" }}
+          ></div>
+          <div
+            className="absolute bottom-0 left-[63%] w-10 bg-black/25 rounded-t-sm animate-float-slow"
+            style={{ height: "100px" }}
+          ></div>
+
+          {/* Chrysler style */}
+          <div
+            className="absolute bottom-0 left-[70%] w-14 bg-black/30 rounded-t-sm animate-float-slower"
+            style={{ height: "140px" }}
+          >
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-10 bg-black/30 rounded-t-lg"></div>
+          </div>
+
+          {/* Far right buildings */}
+          <div
+            className="absolute bottom-0 left-[78%] w-12 bg-black/15 rounded-t-sm animate-float"
+            style={{ height: "60px" }}
+          ></div>
+          <div
+            className="absolute bottom-0 left-[84%] w-16 bg-black/20 rounded-t-sm animate-float-slow"
+            style={{ height: "90px" }}
+          ></div>
+          <div
+            className="absolute bottom-0 left-[92%] w-10 bg-black/25 rounded-t-sm animate-float-slower"
+            style={{ height: "110px" }}
+          ></div>
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 flex flex-col items-center justify-center h-full px-4">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white drop-shadow-lg animate-fade-in">
+            Moving to a New City?
+          </h1>
+          <p className="text-xl text-white max-w-2xl mx-auto drop-shadow-md animate-fade-in-delay">
+            Let us create your personalized welcome guide.
+          </p>
+        </div>
       </div>
 
       {/* Form Card */}

@@ -589,7 +589,7 @@ function generateMockRestaurants(city: string, stateCode: string, preferences: s
       type: cuisine,
       priceRange,
       link: `https://www.google.com/maps/search/${encodeURIComponent(name)}+${encodeURIComponent(city)}+${stateCode}`,
-      photoUrl: `/placeholder.svg?height=200&width=300&query=${encodeURIComponent(cuisine)} restaurant food`,
+      photoUrl: `/placeholder.svg?height=200&width=300&query=restaurant`,
     })
   }
 

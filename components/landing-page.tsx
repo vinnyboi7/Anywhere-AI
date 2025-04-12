@@ -83,9 +83,11 @@ function AnimatedSection({
 export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-purple-50 to-white p-4">
-      <h1 className="text-4xl font-bold mb-6 text-purple-900">Welcome Anywhere</h1>
+      <h1 className="text-4xl font-bold mb-2 text-purple-900">Anywhere AI</h1>
+      <h2 className="text-2xl font-medium mb-3 text-purple-700"></h2>
       <p className="text-xl text-gray-600 max-w-md text-center mb-8">
-        Your personal guide to any new city, powered by AI.
+        Discover local events, culture, and jobs based on what you love. No sign-up needed—just enter your interests and
+        location.
       </p>
       <Link href="/new-form">
         <Button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-full font-medium transition-colors">

@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { GuideResponse } from "@/app/actions"
 import { MapPin, Briefcase, Home, Heart, Globe, Utensils, HelpCircle, Calendar, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { FallbackImage } from "./fallback-image"
 
 interface GuideResultsProps {
   data: GuideResponse
@@ -137,15 +138,14 @@ export function GuideResults({ data, location }: GuideResultsProps) {
                   {data.restaurants.map((restaurant, index) => (
                     <div key={index} className="p-4 bg-sky-50 rounded-md border border-sky-100">
                       <div className="flex flex-col md:flex-row gap-4">
-                        {restaurant.photoUrl && (
-                          <div className="w-full md:w-1/4">
-                            <img
-                              src={restaurant.photoUrl || "/placeholder.svg"}
-                              alt={restaurant.name}
-                              className="w-full h-32 object-cover rounded-md"
-                            />
-                          </div>
-                        )}
+                        <div className="w-full md:w-1/4">
+                          <FallbackImage
+                            src={restaurant.photoUrl || "/placeholder.svg?height=200&width=300&query=restaurant"}
+                            alt={restaurant.name}
+                            fallbackSrc="/cozy-italian-corner.png"
+                            className="w-full h-32 object-cover rounded-md"
+                          />
+                        </div>
                         <div className="flex-1">
                           <div className="font-medium text-lg">{restaurant.name}</div>
                           <div className="text-sm text-gray-600 mb-1">

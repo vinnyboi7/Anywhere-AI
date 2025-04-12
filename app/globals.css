@@ -92,3 +92,53 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Add these styles for the animated blobs */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+}
+
+.blob-1 {
+  width: 250px;
+  height: 250px;
+  left: -50px;
+  top: -100px;
+  animation: blob-move-1 20s ease-in-out infinite;
+}
+
+.blob-2 {
+  width: 200px;
+  height: 200px;
+  right: -30px;
+  top: -50px;
+  animation: blob-move-2 25s ease-in-out infinite;
+}
+
+.blob-3 {
+  width: 300px;
+  height: 300px;
+  left: 30%;
+  bottom: -150px;
+  animation: blob-move-1 30s ease-in-out infinite;
+}
+
+.blob-4 {
+  width: 150px;
+  height: 150px;
+  right: 20%;
+  top: 20px;
+  animation: blob-move-2 18s ease-in-out infinite;
+}
+
+/* Add a media query for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .animate-gradient-x,
+  .animate-float,
+  .animate-float-slow,
+  .animate-float-slower,
+  .blob {
+    animation: none !important;
+  }
+}
