@@ -87,6 +87,21 @@ const buildingShadowStyles = `
     }
   }
 
+  @keyframes window-twinkle {
+    0%, 100% {
+      opacity: 0.7;
+    }
+    25% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 0.9;
+    }
+    75% {
+      opacity: 0.5;
+    }
+  }
+
   /* Dark mode styles */
   .dark .hero-background {
     background: linear-gradient(to bottom right, #1e1b4b, #0f172a, #020617);
@@ -356,8 +371,28 @@ export default function WelcomeForm() {
                       boxShadow: theme === "dark" ? "0 0 15px rgba(0, 0, 0, 0.5)" : "0 0 10px rgba(0, 0, 0, 0.3)",
                     }}
                   >
-                    {/* Building windows with glow effect */}
-                    <div className="building-windows h-full w-full opacity-80"></div>
+                    {/* Replace the building windows with shining windows effect */}
+                    <div
+                      className="h-full w-full"
+                      style={{
+                        backgroundImage: `
+      radial-gradient(circle at ${10 + Math.random() * 80}% ${10 + Math.random() * 80}%, rgba(255, 255, 255, 0.8) 0%, transparent 5%),
+      radial-gradient(circle at ${10 + Math.random() * 80}% ${10 + Math.random() * 80}%, rgba(255, 255, 255, 0.6) 0%, transparent 4%),
+      radial-gradient(circle at ${10 + Math.random() * 80}% ${10 + Math.random() * 80}%, rgba(255, 255, 255, 0.7) 0%, transparent 4.5%),
+      radial-gradient(circle at ${10 + Math.random() * 80}% ${10 + Math.random() * 80}%, rgba(255, 255, 255, 0.5) 0%, transparent 3.5%),
+      radial-gradient(circle at ${10 + Math.random() * 80}% ${10 + Math.random() * 80}%, rgba(255, 255, 255, 0.7) 0%, transparent 4%),
+      radial-gradient(circle at ${10 + Math.random() * 80}% ${10 + Math.random() * 80}%, rgba(255, 255, 255, 0.6) 0%, transparent 3%),
+      radial-gradient(circle at ${10 + Math.random() * 80}% ${10 + Math.random() * 80}%, rgba(255, 255, 255, 0.8) 0%, transparent 4.5%),
+      radial-gradient(circle at ${10 + Math.random() * 80}% ${10 + Math.random() * 80}%, rgba(255, 255, 255, 0.5) 0%, transparent 3%)
+    `,
+                        animationName: "window-twinkle",
+                        animationDuration: `${3 + Math.random() * 5}s`,
+                        animationTimingFunction: "ease-in-out",
+                        animationIterationCount: "infinite",
+                        animationDirection: "alternate",
+                        animationDelay: `${i * 0.3}s`,
+                      }}
+                    ></div>
 
                     {/* Add light at the top of some buildings */}
                     {i % 3 === 0 && (
