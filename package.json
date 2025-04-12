@@ -60,9 +60,7 @@
     "zod": "latest",
     "@emotion/is-prop-valid": "latest",
     "framer-motion": "latest",
-    "react-intersection-observer": "latest",
-    "@ai-sdk/openai": "latest",
-    "ai": "latest"
+    "react-intersection-observer": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

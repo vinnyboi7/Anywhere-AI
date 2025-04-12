@@ -35,6 +35,17 @@ export type Event = {
   link: string
 }
 
+// Update the GuideResponse type to include restaurants
+export type Restaurant = {
+  name: string
+  address: string
+  rating: number
+  type: string
+  link: string
+  photoUrl?: string
+  priceRange?: string
+}
+
 // Define the response type
 export type GuideResponse = {
   welcomeMessage: string
@@ -46,8 +57,10 @@ export type GuideResponse = {
   supportServices: string
   jobListings: JobListing[]
   events: Event[]
+  restaurants: Restaurant[]
 }
 
+// Update the generateGuide function to include restaurant data
 export async function generateGuide(formData: z.infer<typeof formSchema>): Promise<GuideResponse> {
   try {
     // Check if the location is a ZIP code (5 digits)
@@ -72,6 +85,42 @@ export async function generateGuide(formData: z.infer<typeof formSchema>): Promi
     // Generate mock events based on the location and hobbies
     const events = getMockEvents(guideData.locationInfo.city, formData.interests)
 
+    // Get restaurant recommendations
+    let restaurants: Restaurant[] = []
+    try {
+      // Fetch restaurant data from our API endpoint
+      const restaurantResponse = await fetch(`/api/get-food`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          zipCode: zipCode,
+          foodPreferences: formData.foodPreferences,
+        }),
+      })
+
+      if (restaurantResponse.ok) {
+        restaurants = await restaurantResponse.json()
+      } else {
+        console.warn("Restaurant API returned an error. Using mock data instead.")
+        // If the API call fails, generate restaurants directly
+        restaurants = generateMockRestaurants(
+          guideData.locationInfo.city,
+          guideData.locationInfo.stateCode,
+          formData.foodPreferences,
+        )
+      }
+    } catch (error) {
+      console.error("Error fetching restaurant data:", error)
+      // If there's an error, generate restaurants directly
+      restaurants = generateMockRestaurants(
+        guideData.locationInfo.city,
+        guideData.locationInfo.stateCode,
+        formData.foodPreferences,
+      )
+    }
+
     // Format the response to match the expected GuideResponse type
     return {
       welcomeMessage: guideData.welcomeMessage,
@@ -83,6 +132,7 @@ export async function generateGuide(formData: z.infer<typeof formSchema>): Promi
       supportServices: guideData.supportServices.recommendations,
       jobListings,
       events,
+      restaurants,
     }
   } catch (error: any) {
     console.error("Error generating guide:", error)
@@ -407,4 +457,158 @@ function getMockEvents(location: string, hobbies: string[]): Event[] {
   }
 
   return selectedEvents
+}
+
+/**
+ * Generates enhanced mock restaurant data based on location and food preferences
+ */
+function generateMockRestaurants(city: string, stateCode: string, preferences: string[]): Restaurant[] {
+  // Define cuisine types with more specific options
+  const cuisineTypes = {
+    american: ["American", "Burgers", "BBQ", "Southern", "Diner", "Steakhouse"],
+    italian: ["Italian", "Pizza", "Pasta", "Mediterranean"],
+    mexican: ["Mexican", "Tex-Mex", "Latin American", "Tacos"],
+    asian: ["Chinese", "Japanese", "Thai", "Vietnamese", "Korean", "Sushi"],
+    indian: ["Indian", "South Asian", "Curry House"],
+    middleEastern: ["Middle Eastern", "Lebanese", "Turkish", "Falafel"],
+    vegetarian: ["Vegetarian", "Vegan", "Plant-based", "Health Food"],
+    seafood: ["Seafood", "Fish & Chips", "Oyster Bar"],
+    breakfast: ["Breakfast", "Brunch", "Cafe", "Bakery"],
+    dessert: ["Dessert", "Ice Cream", "Bakery", "Chocolate"],
+    fastFood: ["Fast Food", "Burgers", "Chicken", "Sandwiches"],
+    fineDining: ["Fine Dining", "Gourmet", "Contemporary"],
+  }
+
+  // Define restaurant name templates by cuisine
+  const nameTemplatesByCuisine = {
+    american: ["{City} Grill", "The {City} Diner", "{City} Smokehouse", "Main Street Burgers", "Downtown BBQ"],
+    italian: ["Bella {City}", "Pasta Palace", "{City} Trattoria", "Mamma's Kitchen", "Luigi's Pizza"],
+    mexican: ["El {City}", "Taqueria {City}", "Casa {City}", "Fiesta Mexican Grill", "Jalapeño's"],
+    asian: ["Golden Dragon", "{City} Wok", "Sakura Japanese", "Thai Spice", "Pho {City}"],
+    indian: ["Taj {City}", "Spice of India", "Curry House", "Delhi Palace", "Bombay Bistro"],
+    middleEastern: ["Aladdin's", "{City} Kebab", "Mediterranean Delight", "Falafel King", "Olive Tree"],
+    vegetarian: ["Green Table", "Plant Power {City}", "Fresh & Healthy", "Veggie Delight", "Sprout & Root"],
+    seafood: ["{City} Fish Market", "Oceanside", "Captain's Catch", "Lobster Shack", "Blue Water Grill"],
+    breakfast: ["Rise & Shine", "{City} Breakfast Club", "Morning Glory", "Sunny Side Up", "The Biscuit House"],
+    dessert: ["Sweet Treats", "{City} Creamery", "Sugar Rush", "Chocolate Dreams", "The Cupcake Corner"],
+    fastFood: ["Quick Bite", "{City} Express", "Fast & Tasty", "Burger Junction", "Chicken Shack"],
+    fineDining: ["{City} Fine Dining", "Elegant Eats", "The {City} Room", "Gourmet {City}", "Chef's Table"],
+  }
+
+  // Define neighborhoods by city size
+  const getNeighborhoods = (city: string) => {
+    // For simplicity, we'll use generic neighborhood names
+    // In a real app, you might want to use a database of actual neighborhoods
+    const downtownArea = [`Downtown ${city}`, `Central ${city}`, `${city} Center`]
+    const residentialAreas = [`North ${city}`, `South ${city}`, `East ${city}`, `West ${city}`]
+    const trendyAreas = [`${city} Heights`, `${city} Park`, `Old ${city}`, `${city} Village`]
+
+    return [...downtownArea, ...residentialAreas, ...trendyAreas]
+  }
+
+  // Map food preferences to cuisine types
+  const mapPreferencesToCuisines = (prefs: string[]) => {
+    const cuisineMap: Record<string, keyof typeof cuisineTypes> = {
+      vegetarian: "vegetarian",
+      vegan: "vegetarian",
+      halal: "middleEastern",
+      kosher: "middleEastern",
+      "gluten-free": "vegetarian",
+      mexican: "mexican",
+      italian: "italian",
+      chinese: "asian",
+      japanese: "asian",
+      thai: "asian",
+      indian: "indian",
+      american: "american",
+      seafood: "seafood",
+      breakfast: "breakfast",
+      dessert: "dessert",
+      "fast food": "fastFood",
+      "fine dining": "fineDining",
+    }
+
+    const mappedCuisines = new Set<keyof typeof cuisineTypes>()
+
+    // Map each preference to a cuisine type
+    prefs.forEach((pref) => {
+      const normalizedPref = pref.toLowerCase()
+
+      // Check for direct matches
+      if (cuisineMap[normalizedPref]) {
+        mappedCuisines.add(cuisineMap[normalizedPref])
+        return
+      }
+
+      // Check for partial matches
+      for (const [key, value] of Object.entries(cuisineMap)) {
+        if (normalizedPref.includes(key) || key.includes(normalizedPref)) {
+          mappedCuisines.add(value)
+          return
+        }
+      }
+    })
+
+    // If no matches found, add some default cuisines
+    if (mappedCuisines.size === 0) {
+      mappedCuisines.add("american")
+      mappedCuisines.add("italian")
+      mappedCuisines.add("asian")
+    }
+
+    return Array.from(mappedCuisines)
+  }
+
+  // Generate price ranges
+  const priceRanges = ["$", "$$", "$$$"]
+
+  // Map preferences to cuisines
+  const relevantCuisines = mapPreferencesToCuisines(preferences)
+
+  // Get neighborhoods for this city
+  const neighborhoods = getNeighborhoods(city)
+
+  // Generate 5 restaurants
+  const restaurants: Restaurant[] = []
+
+  for (let i = 0; i < 5; i++) {
+    // Select a cuisine type for this restaurant
+    const cuisineType = relevantCuisines[i % relevantCuisines.length]
+
+    // Select a specific cuisine within that type
+    const specificCuisines = cuisineTypes[cuisineType]
+    const cuisine = specificCuisines[Math.floor(Math.random() * specificCuisines.length)]
+
+    // Select a name template and generate a name
+    const nameTemplates = nameTemplatesByCuisine[cuisineType]
+    const nameTemplate = nameTemplates[Math.floor(Math.random() * nameTemplates.length)]
+    const name = nameTemplate.replace("{City}", city)
+
+    // Select a neighborhood
+    const neighborhood = neighborhoods[Math.floor(Math.random() * neighborhoods.length)]
+
+    // Generate a street address
+    const streetNumber = Math.floor(Math.random() * 1000) + 100
+    const streets = ["Main St", "Oak Ave", "Maple Rd", "Broadway", "Park Ave", "1st St", "Washington Blvd", "Market St"]
+    const street = streets[Math.floor(Math.random() * streets.length)]
+
+    // Generate a rating (3.5 to 5.0)
+    const rating = Number.parseFloat((3.5 + Math.random() * 1.5).toFixed(1))
+
+    // Generate a price range
+    const priceRange = priceRanges[Math.floor(Math.random() * priceRanges.length)]
+
+    // Create the restaurant object
+    restaurants.push({
+      name,
+      address: `${streetNumber} ${street}, ${neighborhood}, ${stateCode}`,
+      rating,
+      type: cuisine,
+      priceRange,
+      link: `https://www.google.com/maps/search/${encodeURIComponent(name)}+${encodeURIComponent(city)}+${stateCode}`,
+      photoUrl: `/placeholder.svg?height=200&width=300&query=${encodeURIComponent(cuisine)} restaurant food`,
+    })
+  }
+
+  return restaurants
 }

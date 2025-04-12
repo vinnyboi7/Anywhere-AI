@@ -340,6 +340,12 @@ export default function WelcomeForm() {
                   <p className="text-red-500">{error}</p>
                 </div>
               )}
+              {error && error.includes("OpenAI") && (
+                <div className="text-center mt-4">
+                  <p className="text-amber-600">OpenAI API key is required for enhanced recommendations.</p>
+                  {/* No API key setup needed anymore */}
+                </div>
+              )}
             </form>
           </CardContent>
         </Card>

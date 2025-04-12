@@ -129,6 +129,45 @@ export function GuideResults({ data, location }: GuideResultsProps) {
           <TabsContent value="food" className="p-4 bg-white rounded-md border">
             <h3 className="text-lg font-semibold mb-2">Food Recommendations</h3>
             <p className="whitespace-pre-line">{data.foodRecommendations}</p>
+
+            {data.restaurants && data.restaurants.length > 0 && (
+              <div className="mt-6">
+                <h4 className="font-medium mb-3 text-sky-700">Top Restaurant Picks</h4>
+                <div className="grid gap-4">
+                  {data.restaurants.map((restaurant, index) => (
+                    <div key={index} className="p-4 bg-sky-50 rounded-md border border-sky-100">
+                      <div className="flex flex-col md:flex-row gap-4">
+                        {restaurant.photoUrl && (
+                          <div className="w-full md:w-1/4">
+                            <img
+                              src={restaurant.photoUrl || "/placeholder.svg"}
+                              alt={restaurant.name}
+                              className="w-full h-32 object-cover rounded-md"
+                            />
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <div className="font-medium text-lg">{restaurant.name}</div>
+                          <div className="text-sm text-gray-600 mb-1">
+                            {restaurant.type} • {restaurant.priceRange || "$-$$"} • {restaurant.rating} ★
+                          </div>
+                          <div className="text-sm text-gray-600 mb-2">{restaurant.address}</div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-sky-700 border-sky-200 hover:bg-sky-100"
+                            onClick={() => window.open(restaurant.link, "_blank")}
+                          >
+                            <ExternalLink className="h-3 w-3 mr-1" />
+                            View on Map
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="language" className="p-4 bg-white rounded-md border">

@@ -124,13 +124,16 @@ export default function WelcomeForm() {
           })
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error generating guide:", err)
-      setError("We couldn't generate your personalized guide at this moment. Please try again later.")
+      setError(err.message || "We couldn't generate your personalized guide at this moment. Please try again later.")
     } finally {
       setIsLoading(false)
     }
   }
+
+  // Function to validate if input is a ZIP code
+  const isZipCode = (value: string) => /^\d{5}$/.test(value)
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -155,6 +158,13 @@ export default function WelcomeForm() {
                 />
                 {form.formState.errors.location && (
                   <p className="text-sm text-red-500">{form.formState.errors.location.message}</p>
+                )}
+                {!form.formState.errors.location && form.getValues("location") && (
+                  <p className="text-sm text-gray-500">
+                    {isZipCode(form.getValues("location"))
+                      ? "Using ZIP code for precise location"
+                      : "For best results, enter a 5-digit ZIP code"}
+                  </p>
                 )}
               </div>
 
