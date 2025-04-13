@@ -1,4 +1,4 @@
-import { getLocationFromZipCode } from "./location-utils"
+import { getLocationFromZipCode, getLocationFromCityName } from "./location-utils"
 
 // Define the input type for the guide generator
 export interface GuideInput {
@@ -49,8 +49,29 @@ export interface GuideResponse {
  */
 export async function generateGuide(input: GuideInput): Promise<GuideResponse> {
   try {
-    // Step 1: Convert ZIP code to location
-    const locationInfo = await getLocationFromZipCode(input.zipCode)
+    // Step 1: Convert input location to location info
+    let locationInfo
+
+    // Check if the input is a ZIP code (5 digits)
+    const isZipCode = /^\d{5}$/.test(input.zipCode)
+
+    if (isZipCode) {
+      // If it's a ZIP code, use the ZIP code to location function
+      locationInfo = await getLocationFromZipCode(input.zipCode)
+    } else {
+      // If it's not a ZIP code, use the city name to location function
+      const cityInfo = await getLocationFromCityName(input.zipCode)
+      locationInfo = {
+        city: cityInfo.city,
+        state: cityInfo.state,
+        stateCode: cityInfo.stateCode,
+        fullAddress: cityInfo.fullAddress,
+      }
+
+      // Update the input zipCode with the one from cityInfo for consistent behavior
+      input.zipCode = cityInfo.zipCode
+    }
+
     const { city, state, stateCode, fullAddress } = locationInfo
 
     // Step 2: Generate mock data based on the location and user preferences
@@ -361,7 +382,7 @@ function generateMockGuideData(
       } else if (normalizedPref === "halal") {
         recommendation += `Spice Garden and Halal Grill provide authentic halal options. `
       } else if (normalizedPref === "non-veg") {
-        ;`${city} Steakhouse and Seafood Harbor are great for non-vegetarian dishes. `
+        recommendation += `${city} Steakhouse and Seafood Harbor are great for non-vegetarian dishes. `
       }
     })
 

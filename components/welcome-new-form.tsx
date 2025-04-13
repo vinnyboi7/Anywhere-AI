@@ -19,6 +19,9 @@ import { Loader2 } from "lucide-react"
 import { Footer } from "@/components/footer"
 import { useTheme } from "next-themes"
 
+// Function to validate if input is a ZIP code
+const isZipCode = (value: string) => /^\d{5}$/.test(value)
+
 // Add CSS for building shadows
 const buildingShadowStyles = `
   .city-building-shadows {
@@ -317,8 +320,10 @@ const buildingShadowStyles = `
   }
 `
 
+// Update the formSchema to better validate location input
+
 const formSchema = z.object({
-  location: z.string().min(2, { message: "Please enter a valid location" }),
+  location: z.string().min(2, { message: "Please enter a valid location (city name or 5-digit ZIP code)" }),
   interests: z.array(z.string()).min(1, { message: "Select at least one interest" }),
   foodPreferences: z.array(z.string()).min(1, { message: "Select at least one food preference" }),
   language: z.string().min(1, { message: "Please select a language" }),
@@ -639,12 +644,19 @@ export default function WelcomeForm() {
                   </Label>
                   <Input
                     id="location"
-                    placeholder="Enter city or zip code"
+                    placeholder="Enter city, state or 5-digit ZIP code"
                     {...form.register("location")}
                     className="h-12 px-4 rounded-lg border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white focus-visible:ring-purple-500"
                   />
                   {form.formState.errors.location && (
                     <p className="text-sm text-red-500">{form.formState.errors.location.message}</p>
+                  )}
+                  {!form.formState.errors.location && form.getValues("location") && (
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {isZipCode(form.getValues("location"))
+                        ? "Using ZIP code for precise location lookup"
+                        : "Using city name for location lookup"}
+                    </p>
                   )}
                 </div>
 

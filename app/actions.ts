@@ -2,6 +2,7 @@
 
 import { z } from "zod"
 import { generateGuide as generateGuideFromLib } from "@/lib/guide-generator"
+import { getLocationFromInput } from "@/lib/location-utils"
 
 // Define the schema for the form data
 const formSchema = z.object({
@@ -60,18 +61,23 @@ export type GuideResponse = {
   restaurants: Restaurant[]
   budget: number
   housingType: string
+  searchLocation: {
+    city: string
+    zipCode: string
+    state: string
+    stateCode: string
+  }
 }
 
-// Update the generateGuide function to include restaurant data
+// Update the generateGuide function to handle both city names and zip codes:
 export async function generateGuide(formData: z.infer<typeof formSchema>): Promise<GuideResponse> {
   try {
-    // Check if the location is a ZIP code (5 digits)
-    const isZipCode = /^\d{5}$/.test(formData.location)
-    const zipCode = isZipCode ? formData.location : "75201" // Default to Dallas if not a ZIP
+    // Process the location input to get consistent location information
+    const locationInfo = await getLocationFromInput(formData.location)
 
-    // Generate the guide using our new library function
+    // Generate the guide using our library function with the ZIP code
     const guideData = await generateGuideFromLib({
-      zipCode,
+      zipCode: locationInfo.zipCode,
       hobbies: formData.interests,
       foodPreferences: formData.foodPreferences,
       preferredLanguage: formData.language,
@@ -82,28 +88,20 @@ export async function generateGuide(formData: z.infer<typeof formSchema>): Promi
     })
 
     // Generate mock job listings based on the location and job type
-    const jobListings = getMockJobs(guideData.locationInfo.city, formData.jobField)
+    const jobListings = getMockJobs(locationInfo.city, formData.jobField)
 
     // Generate mock events based on the location and hobbies
-    const events = getMockEvents(guideData.locationInfo.city, formData.interests)
+    const events = getMockEvents(locationInfo.city, formData.interests)
 
     // Get restaurant recommendations
     let restaurants: Restaurant[] = []
     try {
       // Generate restaurants directly without API call to avoid client-side fetch issues
-      restaurants = generateMockRestaurants(
-        guideData.locationInfo.city,
-        guideData.locationInfo.stateCode,
-        formData.foodPreferences,
-      )
+      restaurants = generateMockRestaurants(locationInfo.city, locationInfo.stateCode, formData.foodPreferences)
     } catch (error) {
       console.error("Error generating restaurant data:", error)
       // If there's an error, generate restaurants with fallback data
-      restaurants = generateMockRestaurants(
-        guideData.locationInfo.city,
-        guideData.locationInfo.stateCode || guideData.locationInfo.state.substring(0, 2).toUpperCase(),
-        formData.foodPreferences,
-      )
+      restaurants = generateMockRestaurants(locationInfo.city, locationInfo.stateCode, formData.foodPreferences)
     }
 
     // Format the response to match the expected GuideResponse type
@@ -120,6 +118,12 @@ export async function generateGuide(formData: z.infer<typeof formSchema>): Promi
       restaurants,
       budget: formData.budget,
       housingType: formData.housing,
+      searchLocation: {
+        city: locationInfo.city,
+        zipCode: locationInfo.zipCode,
+        state: locationInfo.state,
+        stateCode: locationInfo.stateCode,
+      },
     }
   } catch (error: any) {
     console.error("Error generating guide:", error)
@@ -547,7 +551,7 @@ function generateMockRestaurants(city: string, stateCode: string, preferences: s
   }
 
   // Generate price ranges
-  const priceRanges = ["$", "$", "$$"]
+  const priceRanges = ["$", "$$", "$$$"]
 
   // Map preferences to cuisines
   const relevantCuisines = mapPreferencesToCuisines(preferences)
@@ -681,7 +685,6 @@ function generateMockRestaurants(city: string, stateCode: string, preferences: s
     const rating = Number.parseFloat((3.5 + Math.random() * 1.5).toFixed(1))
 
     // Generate a price range
-    const priceRanges = ["$", "$$", "$$$"]
     const priceRange = priceRanges[Math.floor(Math.random() * priceRanges.length)]
 
     // Create the restaurant object

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Loader2, MapPin, Bed, Bath, Home, DollarSign, ExternalLink } from "lucide-react"
 import { FallbackImage } from "@/components/fallback-image"
+import { getLocationFromInput } from "@/lib/location-utils"
 
 interface HousingProperty {
   id: string
@@ -37,10 +38,6 @@ declare global {
   }
 }
 
-// And change the map and markers state variables:
-//const [map, setMap] = useState<any | null>(null)
-//const [markers, setMarkers] = useState<any[]>([])
-
 export function HousingRecommendations({ location, budget, housingType }: HousingRecommendationsProps) {
   const [properties, setProperties] = useState<HousingProperty[]>([])
   const [loading, setLoading] = useState(true)
@@ -49,16 +46,50 @@ export function HousingRecommendations({ location, budget, housingType }: Housin
   const [mapLoaded, setMapLoaded] = useState(false)
   const [map, setMap] = useState<any | null>(null)
   const [markers, setMarkers] = useState<any[]>([])
+  const [locationInfo, setLocationInfo] = useState<{
+    city: string
+    state: string
+    stateCode: string
+    zipCode: string
+  } | null>(null)
 
-  // Generate mock properties based on location and budget
+  // Process location input and generate mock properties
   useEffect(() => {
     const fetchProperties = async () => {
       try {
         setLoading(true)
 
-        // In a real app, this would be an API call
-        // For now, we'll generate mock data
-        const mockProperties = generateMockProperties(location, budget, housingType)
+        // First, convert the location input to standardized location info
+        let locationData
+        try {
+          locationData = await getLocationFromInput(location)
+        } catch (error) {
+          console.error("Error processing location:", error)
+          // Fallback to using the raw input as the city name
+          locationData = {
+            city: location,
+            state: "",
+            stateCode: "",
+            zipCode: "",
+          }
+        }
+        setLocationInfo(locationData)
+
+        // Normalize city name - remove special characters, extra spaces
+        const normalizedCity = locationData.city
+          .trim()
+          .replace(/[^\w\s]/gi, "")
+          .replace(/\s+/g, " ")
+
+        // Generate mock properties using the normalized city name
+        const mockProperties = generateMockProperties(
+          normalizedCity,
+          budget,
+          housingType,
+          locationData.state,
+          locationData.stateCode,
+        )
+
         setProperties(mockProperties)
 
         // Initialize map after properties are loaded
@@ -129,10 +160,13 @@ export function HousingRecommendations({ location, budget, housingType }: Housin
       mapDiv.appendChild(marker)
     })
 
-    // Add map title
+    // Add map title with location info
     const mapTitle = document.createElement("div")
     mapTitle.className = "absolute top-2 left-2 bg-white px-2 py-1 rounded shadow text-sm font-medium"
-    mapTitle.textContent = `Housing in ${location}`
+
+    // Use the processed city name from locationInfo if available
+    const displayLocation = locationInfo ? locationInfo.city : location
+    mapTitle.textContent = `Housing in ${displayLocation}`
     mapDiv.appendChild(mapTitle)
 
     // Add property count
@@ -140,7 +174,7 @@ export function HousingRecommendations({ location, budget, housingType }: Housin
     propertyCount.className = "absolute bottom-2 right-2 bg-white px-2 py-1 rounded shadow text-sm"
     propertyCount.textContent = `${properties.length} properties found`
     mapDiv.appendChild(propertyCount)
-  }, [mapLoaded, properties, selectedProperty])
+  }, [mapLoaded, properties, selectedProperty, locationInfo])
 
   if (loading) {
     return (
@@ -292,7 +326,15 @@ function PropertyDetail({ property }: { property: HousingProperty }) {
 }
 
 // Helper function to generate mock properties
-function generateMockProperties(location: string, budget: number, housingType: string): HousingProperty[] {
+function generateMockProperties(
+  cityName: string,
+  budget: number,
+  housingType: string,
+  state = "",
+  stateCode = "",
+): HousingProperty[] {
+  // Ensure we have a valid city name to work with
+  cityName = cityName || "Your City"
   // Normalize housing type
   const normalizedType = housingType.toLowerCase()
 
@@ -308,12 +350,12 @@ function generateMockProperties(location: string, budget: number, housingType: s
 
   // Generate neighborhoods based on location
   const neighborhoods = [
-    `Downtown ${location}`,
-    `Midtown ${location}`,
+    `Downtown ${cityName}`,
+    `Midtown ${cityName}`,
     `University District`,
-    `North ${location}`,
-    `West ${location}`,
-    `${location} Heights`,
+    `North ${cityName}`,
+    `West ${cityName}`,
+    `${cityName} Heights`,
   ]
 
   // Generate street names
@@ -385,19 +427,22 @@ function generateMockProperties(location: string, budget: number, housingType: s
     }
 
     // Generate image query based on property type
-    const imageQuery = `${type.toLowerCase()} in ${location}`
+    const imageQuery = `${type.toLowerCase()} in ${cityName}`
+
+    // Use state code if provided, otherwise use a default
+    const displayStateCode = stateCode || "NY"
 
     properties.push({
       id: `property-${i}`,
       title,
-      address: `${streetNumber} ${street}, ${neighborhood}, ${location}`,
+      address: `${streetNumber} ${street}, ${neighborhood}, ${displayStateCode}`,
       price,
       bedrooms,
       bathrooms,
       squareFeet,
       type,
       image: `/placeholder.svg?height=300&width=400&query=${encodeURIComponent(imageQuery)}`,
-      link: `https://www.google.com/maps/search/${encodeURIComponent(title + " " + location)}`,
+      link: `https://www.google.com/maps/search/${encodeURIComponent(title + " " + cityName)}`,
       coordinates: {
         lat: 0, // In a real app, these would be actual coordinates
         lng: 0,

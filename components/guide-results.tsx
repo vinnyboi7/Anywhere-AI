@@ -194,13 +194,18 @@ export function GuideResults({ data, location }: GuideResultsProps) {
                       className="p-4 bg-sky-50 dark:bg-sky-900/30 rounded-md border border-sky-100 dark:border-sky-900 transition-colors duration-300"
                     >
                       <div className="flex flex-col md:flex-row gap-4">
-                        <div className="w-full md:w-1/4">
+                        <div className="w-full md:w-1/4 relative bg-gray-200 rounded-md overflow-hidden">
                           <FallbackImage
-                            src={restaurant.photoUrl || "/placeholder.svg?height=200&width=300&query=restaurant"}
+                            src={`/placeholder.svg?height=300&width=400&query=${encodeURIComponent(`${restaurant.type} restaurant in ${restaurant.address.split(",")[0]}`)}`}
                             alt={restaurant.name}
                             fallbackSrc="/cozy-italian-corner.png"
-                            className="w-full h-32 object-cover rounded-md"
+                            className="w-full h-32 object-cover rounded-md block"
                           />
+                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-1">
+                            <div className="text-xs text-white font-medium">
+                              {restaurant.type} • {restaurant.rating}★
+                            </div>
+                          </div>
                         </div>
                         <div className="flex-1">
                           <div className="font-medium text-lg dark:text-white">{restaurant.name}</div>
