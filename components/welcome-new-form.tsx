@@ -587,32 +587,48 @@ export default function WelcomeForm() {
                 const floatClasses = ["building-float-1", "building-float-2", "building-float-3"]
                 const floatClass = floatClasses[i % floatClasses.length]
 
+                // Calculate building dimensions - wider buildings with varying heights
+                const width = 40 + Math.random() * 30 // Wider buildings
+                const height = 30 + Math.random() * 70
+
                 return (
                   <div
                     key={i}
-                    className={`building-animated ${floatClass} ${colorClass} mx-[2px] rounded-t-sm transition-colors duration-300`}
+                    className={`building-animated ${floatClass} ${colorClass} mx-[1px] rounded-t-sm transition-colors duration-300 relative`}
                     style={{
-                      height: `${30 + Math.random() * 70}px`,
-                      width: `${30 + Math.random() * 50}px`,
+                      height: `${height}px`,
+                      width: `${width}px`,
                       animationDelay: `${i * 0.5}s`,
                       opacity: 0.9,
                       boxShadow: theme === "dark" ? "0 0 15px rgba(0, 0, 0, 0.5)" : "0 0 10px rgba(0, 0, 0, 0.3)",
                     }}
                   >
-                    {/* Replace the building windows with shining windows effect */}
+                    {/* Building top - add architectural details */}
+                    <div
+                      className={`absolute top-0 left-1/2 w-1/3 h-[10px] ${colorClass} rounded-t-sm`}
+                      style={{ transform: "translateX(-50%)" }}
+                    ></div>
+
+                    {/* Building windows pattern */}
                     <div
                       className="h-full w-full"
                       style={{
                         backgroundImage: `
-      radial-gradient(circle at ${10 + Math.random() * 80}% ${10 + Math.random() * 80}%, rgba(255, 255, 255, 0.8) 0%, transparent 5%),
-      radial-gradient(circle at ${10 + Math.random() * 80}% ${10 + Math.random() * 80}%, rgba(255, 255, 255, 0.6) 0%, transparent 4%),
-      radial-gradient(circle at ${10 + Math.random() * 80}% ${10 + Math.random() * 80}%, rgba(255, 255, 255, 0.7) 0%, transparent 4.5%),
-      radial-gradient(circle at ${10 + Math.random() * 80}% ${10 + Math.random() * 80}%, rgba(255, 255, 255, 0.5) 0%, transparent 3.5%),
-      radial-gradient(circle at ${10 + Math.random() * 80}% ${10 + Math.random() * 80}%, rgba(255, 255, 255, 0.7) 0%, transparent 4%),
-      radial-gradient(circle at ${10 + Math.random() * 80}% ${10 + Math.random() * 80}%, rgba(255, 255, 255, 0.6) 0%, transparent 3%),
-      radial-gradient(circle at ${10 + Math.random() * 80}% ${10 + Math.random() * 80}%, rgba(255, 255, 255, 0.8) 0%, transparent 4.5%),
-      radial-gradient(circle at ${10 + Math.random() * 80}% ${10 + Math.random() * 80}%, rgba(255, 255, 255, 0.5) 0%, transparent 3%)
-    `,
+                          repeating-linear-gradient(
+                            to bottom,
+                            transparent,
+                            transparent 10%,
+                            rgba(255, 255, 255, 0.1) 10%,
+                            rgba(255, 255, 255, 0.1) 15%
+                          ),
+                          repeating-linear-gradient(
+                            to right,
+                            transparent,
+                            transparent 20%,
+                            rgba(255, 255, 255, 0.1) 20%,
+                            rgba(255, 255, 255, 0.1) 30%
+                          )
+                        `,
                         animationName: "window-twinkle",
                         animationDuration: `${3 + Math.random() * 5}s`,
                         animationTimingFunction: "ease-in-out",
@@ -635,6 +651,23 @@ export default function WelcomeForm() {
                         }}
                       ></div>
                     )}
+
+                    {/* Add random windows that glow */}
+                    {[...Array(Math.floor(3 + Math.random() * 5))].map((_, j) => (
+                      <div
+                        key={`window-${i}-${j}`}
+                        className="absolute bg-yellow-100 opacity-70"
+                        style={{
+                          width: `${2 + Math.random() * 3}px`,
+                          height: `${2 + Math.random() * 3}px`,
+                          left: `${10 + Math.random() * 80}%`,
+                          top: `${20 + Math.random() * 60}%`,
+                          boxShadow: "0 0 3px rgba(255, 255, 200, 0.8)",
+                          animation: `window-twinkle ${2 + Math.random() * 4}s ease-in-out infinite alternate`,
+                          animationDelay: `${Math.random() * 2}s`,
+                        }}
+                      ></div>
+                    ))}
                   </div>
                 )
               })}

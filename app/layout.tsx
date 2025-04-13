@@ -1,5 +1,6 @@
 import type React from "react"
 import { ScrollNav } from "@/components/scroll-nav"
+import Navbar from "@/components/navbar"
 import "./globals.css"
 
 export default function RootLayout({
@@ -10,6 +11,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <Navbar />
         {children}
         <ScrollNav />
       </body>

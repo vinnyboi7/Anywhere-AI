@@ -8,7 +8,8 @@ import { Footer } from "@/components/footer"
 export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-purple-50 via-white to-purple-50 dark:from-purple-950 dark:via-gray-900 dark:to-purple-950 p-4 transition-colors duration-500">
-      <div className="absolute inset-0 overflow-hidden">
+      {/* Add id="home" to make the navbar link work */}
+      <div id="home" className="absolute inset-0 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-200/20 via-transparent to-transparent dark:from-purple-500/10 opacity-70"></div>
 
         {/* Animated background elements */}
@@ -17,7 +18,8 @@ export default function LandingPage() {
         <div className="absolute bottom-1/4 right-1/3 w-96 h-96 bg-blue-200 dark:bg-blue-900/20 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
       </div>
 
-      <div className="relative z-10 flex flex-col items-center justify-center text-center max-w-4xl mx-auto">
+      {/* Add padding-top to account for the navbar */}
+      <div className="relative z-10 flex flex-col items-center justify-center text-center max-w-4xl mx-auto pt-16 md:pt-20">
         <motion.h1
           className="text-5xl md:text-6xl font-bold mb-2 text-purple-900 dark:text-purple-300 tracking-tight"
           initial={{ opacity: 0, y: 20 }}
