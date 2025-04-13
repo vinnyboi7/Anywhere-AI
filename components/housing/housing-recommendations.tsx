@@ -214,12 +214,13 @@ function PropertyCard({
       className={`overflow-hidden cursor-pointer transition-all hover:shadow-md ${isSelected ? "ring-2 ring-primary" : ""}`}
       onClick={onClick}
     >
-      <div className="relative h-40">
+      <div className="relative h-40 bg-gray-100 overflow-hidden">
         <FallbackImage
           src={property.image}
           alt={property.title}
           fallbackSrc="/cozy-city-apartment.png"
           className="w-full h-full object-cover"
+          style={{ display: "block" }}
         />
         <div className="absolute top-2 right-2">
           <Badge variant="secondary" className="bg-black/70 text-white hover:bg-black/70">
