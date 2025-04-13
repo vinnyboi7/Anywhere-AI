@@ -26,12 +26,14 @@ export function GuideResults({ data, location }: GuideResultsProps) {
           <TabsList className="grid grid-cols-3 md:grid-cols-7 mb-4 dark:bg-gray-800 transition-colors duration-300">
             <TabsTrigger
               value="welcome"
+              data-value="welcome"
               className="dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white transition-colors duration-300"
             >
               Welcome
             </TabsTrigger>
             <TabsTrigger
               value="housing"
+              data-value="housing"
               className="dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white transition-colors duration-300"
             >
               <Home className="h-4 w-4 mr-1 md:mr-2" />
@@ -39,6 +41,7 @@ export function GuideResults({ data, location }: GuideResultsProps) {
             </TabsTrigger>
             <TabsTrigger
               value="jobs"
+              data-value="jobs"
               className="dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white transition-colors duration-300"
             >
               <Briefcase className="h-4 w-4 mr-1 md:mr-2" />
@@ -46,6 +49,7 @@ export function GuideResults({ data, location }: GuideResultsProps) {
             </TabsTrigger>
             <TabsTrigger
               value="events"
+              data-value="events"
               className="dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white transition-colors duration-300"
             >
               <Heart className="h-4 w-4 mr-1 md:mr-2" />
@@ -53,6 +57,7 @@ export function GuideResults({ data, location }: GuideResultsProps) {
             </TabsTrigger>
             <TabsTrigger
               value="food"
+              data-value="food"
               className="dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white transition-colors duration-300"
             >
               <Utensils className="h-4 w-4 mr-1 md:mr-2" />
@@ -60,6 +65,7 @@ export function GuideResults({ data, location }: GuideResultsProps) {
             </TabsTrigger>
             <TabsTrigger
               value="language"
+              data-value="language"
               className="dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white transition-colors duration-300"
             >
               <Globe className="h-4 w-4 mr-1 md:mr-2" />
@@ -67,6 +73,7 @@ export function GuideResults({ data, location }: GuideResultsProps) {
             </TabsTrigger>
             <TabsTrigger
               value="support"
+              data-value="support"
               className="dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white transition-colors duration-300"
             >
               <HelpCircle className="h-4 w-4 mr-1 md:mr-2" />

@@ -400,6 +400,29 @@ export default function WelcomeForm() {
   const [locationInfo, setLocationInfo] = useState<{ city: string } | null>(null)
   const { theme, setTheme } = useTheme()
 
+  // Handle tab selection from URL parameters
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search)
+      const tabParam = params.get("tab")
+
+      // If guide data exists and a tab parameter is provided, scroll to results and select tab
+      if (guideData && tabParam) {
+        // Find the tab element and click it
+        const tabElement = document.querySelector(`[data-value="${tabParam}"]`)
+        if (tabElement) {
+          ;(tabElement as HTMLElement).click()
+
+          // Scroll to the results section
+          const resultsElement = document.getElementById("guide-results")
+          if (resultsElement) {
+            resultsElement.scrollIntoView({ behavior: "smooth" })
+          }
+        }
+      }
+    }
+  }, [guideData])
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -621,7 +644,7 @@ export default function WelcomeForm() {
           <h1 className="text-4xl md:text-6xl font-bold mb-4 text-black dark:text-white drop-shadow-lg animate-fade-in hero-text transition-colors duration-300">
             Moving to a New City?
           </h1>
-          <p className="text-xl md:text-2xl text-black dark:text-gray-200 max-w-2xl mx-auto drop-shadow-md animate-fade-in-delay hero-subtext transition-colors duration-300">
+          <p className="text-xl md:text-2xl text-black dark:text-gray-200 max-w2xl mx-auto drop-shadow-md animate-fade-in-delay hero-subtext transition-colors duration-300">
             Let us create your personalized welcome guide.
           </p>
         </div>
@@ -868,7 +891,7 @@ export default function WelcomeForm() {
         </Card>
       </div>
       {guideData && (
-        <div className="mt-8">
+        <div id="guide-results" className="mt-8">
           <GuideResults data={guideData} location={locationInfo?.city || form.getValues().location} />
         </div>
       )}

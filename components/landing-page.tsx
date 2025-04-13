@@ -69,22 +69,34 @@ export default function LandingPage() {
               preferences.
             </p>
             <div className="grid grid-cols-2 gap-4 mt-6">
-              <div className="flex items-center p-3 rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800/30">
+              <Link
+                href="/new-form?tab=housing"
+                className="flex items-center p-3 rounded-lg bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/20 dark:hover:bg-purple-900/30 border border-purple-100 dark:border-purple-800/30 transition-colors duration-200 cursor-pointer"
+              >
                 <Home className="h-5 w-5 text-purple-500 dark:text-purple-400 mr-3" />
                 <span className="text-sm text-gray-700 dark:text-gray-300">Housing Options</span>
-              </div>
-              <div className="flex items-center p-3 rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800/30">
+              </Link>
+              <Link
+                href="/new-form?tab=jobs"
+                className="flex items-center p-3 rounded-lg bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/20 dark:hover:bg-purple-900/30 border border-purple-100 dark:border-purple-800/30 transition-colors duration-200 cursor-pointer"
+              >
                 <Briefcase className="h-5 w-5 text-purple-500 dark:text-purple-400 mr-3" />
                 <span className="text-sm text-gray-700 dark:text-gray-300">Job Opportunities</span>
-              </div>
-              <div className="flex items-center p-3 rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800/30">
+              </Link>
+              <Link
+                href="/new-form?tab=events"
+                className="flex items-center p-3 rounded-lg bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/20 dark:hover:bg-purple-900/30 border border-purple-100 dark:border-purple-800/30 transition-colors duration-200 cursor-pointer"
+              >
                 <Heart className="h-5 w-5 text-purple-500 dark:text-purple-400 mr-3" />
                 <span className="text-sm text-gray-700 dark:text-gray-300">Local Events</span>
-              </div>
-              <div className="flex items-center p-3 rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800/30">
+              </Link>
+              <Link
+                href="/new-form?tab=food"
+                className="flex items-center p-3 rounded-lg bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/20 dark:hover:bg-purple-900/30 border border-purple-100 dark:border-purple-800/30 transition-colors duration-200 cursor-pointer"
+              >
                 <Compass className="h-5 w-5 text-purple-500 dark:text-purple-400 mr-3" />
                 <span className="text-sm text-gray-700 dark:text-gray-300">City Navigation</span>
-              </div>
+              </Link>
             </div>
           </div>
         </motion.div>
