@@ -12,9 +12,7 @@ export function Footer() {
           {/* Left section */}
           <div className="flex flex-col space-y-1.5">
             <p className="text-sm text-gray-800 dark:text-gray-100">© 2025 Welcome Anywhere</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Built with ❤️ for the Tech for Community Hackathon
-            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Built with ❤️ for hackathon</p>
           </div>
 
           {/* Middle section */}
@@ -34,7 +32,7 @@ export function Footer() {
                   href="#"
                   className="hover:text-purple-600 dark:hover:text-purple-400 text-gray-600 dark:text-gray-400 transition-colors"
                 >
-                  Pankaj Bhatta
+                  Naresh Chhetri
                 </Link>
               </li>
               <li>
@@ -42,14 +40,8 @@ export function Footer() {
                   href="#"
                   className="hover:text-purple-600 dark:hover:text-purple-400 text-gray-600 dark:text-gray-400 transition-colors"
                 >
-                  Prasun Chhetri
+                  Lochan Acharya
                 </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="hover:text-purple-600 dark:hover:text-purple-400 text-gray-600 dark:text-gray-400 transition-colors"
-                ></Link>
               </li>
             </ul>
           </div>

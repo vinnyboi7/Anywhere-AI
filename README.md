@@ -99,37 +99,85 @@ We're continuously working to improve Welcome Anywhere. Planned enhancements inc
 
 ## 👥 Contributing
 
-We welcome contributions from the community! Here's how you can help:
+We welcome contributions from developers, designers, and community advocates! Here's how you can help make Welcome Anywhere better:
 
-1. **Fork the repository**: Create your own copy of the project.
-2. **Create a branch**: Make your changes in a new branch.
+### Ways to Contribute
 
-```shellscript
-git checkout -b feature/your-feature-name
-```
+1. **Code Contributions**: Help us build new features or fix bugs
+2. **Design Improvements**: Enhance the user interface and experience
+3. **Content & Localization**: Add support for new cities and languages
+4. **Community Feedback**: Share insights from your relocation experiences
+5. **Documentation**: Improve our guides and technical documentation
 
+### Getting Started
 
-3. **Make your changes**: Implement your feature or bug fix.
-4. **Run tests**: Ensure your changes don't break existing functionality.
+1. **Fork the repository**: Create your own copy of the project on GitHub
+2. **Clone your fork**: Download the code to your local machine
 
-```shellscript
-npm run test
-```
+\`\`\`shellscript
+git clone https://github.com/your-username/welcome-anywhere-app.git
+cd welcome-anywhere-app
+\`\`\`
 
+3. **Install dependencies**: Set up the development environment
 
-5. **Submit a pull request**: Open a PR with a clear description of your changes.
+\`\`\`shellscript
+npm install
+\`\`\`
 
+4. **Create a branch**: Make your changes in a new feature branch
 
-Please review our [Contributing Guidelines](CONTRIBUTING.md) for more detailed information.
+\`\`\`shellscript
+git checkout -b feature/your-amazing-feature
+\`\`\`
+
+5. **Make your changes**: Implement your feature or bug fix
+6. **Test thoroughly**: Ensure your changes work as expected
+
+\`\`\`shellscript
+npm run dev
+npm run build
+npm run lint
+\`\`\`
+
+7. **Commit your changes**: Write clear, descriptive commit messages
+
+\`\`\`shellscript
+git add .
+git commit -m "Add: Brief description of your changes"
+\`\`\`
+
+8. **Push and create PR**: Submit your changes for review
+
+\`\`\`shellscript
+git push origin feature/your-amazing-feature
+\`\`\`
+
+Then open a Pull Request on GitHub with a detailed description of your changes.
+
+### Code Guidelines
+
+- Follow our ESLint and Prettier configurations
+- Write meaningful commit messages
+- Add comments for complex logic
+- Ensure responsive design principles
+- Test on multiple devices and browsers
+
+### Community Guidelines
+
+- Be respectful and inclusive in all interactions
+- Provide constructive feedback on issues and PRs
+- Help newcomers get started with contributing
+- Share your relocation experiences to improve our recommendations
 
 ### Code Style
 
 We use ESLint and Prettier to maintain code quality. Please ensure your code follows our style guidelines by running:
 
-```shellscript
+\`\`\`shellscript
 npm run lint
 npm run format
-```
+\`\`\`
 
 ## 📞 Contact & Support
 
@@ -145,13 +193,21 @@ Welcome Anywhere is licensed under the MIT License - see the [LICENSE](LICENSE) 
 
 ## 🙏 Acknowledgements
 
-- Thanks to all contributors who have helped shape this project
+### Core Contributors
+
+- **Lochan Acharya** - Lead Developer & Project Architect
+- **Naresh Chhetri** - Full-Stack Developer & UI/UX Designer
+
+### Special Thanks
+
+- Thanks to all community contributors who have helped shape this project
 - Special thanks to the Tech for Community Hackathon for inspiring this initiative
 - We're grateful to the open-source community for the fantastic tools that made this project possible
 
-
 ---
 
-Built with ❤️ for newcomers everywhere. We believe everyone deserves to feel at home, wherever they go.
+**Built with ❤️ and community spirit for newcomers everywhere.**
 
+*We believe that moving to a new place should be an exciting adventure, not a stressful ordeal. Every line of code, every design decision, and every recommendation is crafted with the hope of making someone's transition a little easier and their new city feel a little more like home.*
 
+**Join our mission** - Whether you're a developer, designer, recent relocator, or long-time local, your perspective can help make Welcome Anywhere better for everyone. Together, we're building more than just an app; we're building bridges between people and places, creating connections that turn strangers into neighbors and new cities into home.
