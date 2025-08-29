@@ -43,6 +43,14 @@ export function Footer() {
                   Lochan Acharya
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="#"
+                  className="hover:text-purple-600 dark:hover:text-purple-400 text-gray-600 dark:text-gray-400 transition-colors"
+                >
+                  Pankaj Bhatta
+                </Link>
+              </li>
             </ul>
           </div>
 
